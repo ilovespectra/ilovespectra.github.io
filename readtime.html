@@ -5,14 +5,15 @@
   </head>
   <body>
     <h1>Read Time Calculator</h1>
-    <form>
+    <form id="form">
       <label for="url">Enter the URL of the document:</label><br>
       <input type="url" id="url" name="url"><br>
-      <button type="button" onclick="calculateReadTime()">Calculate</button>
+      <button type="submit">Estimate</button>
     </form>
     <p id="readtime"></p>
     <script>
-      function calculateReadTime() {
+      document.getElementById("form").addEventListener("submit", function(event) {
+        event.preventDefault();
         const wordsPerMinute = 200; // Adjust as needed
         const url = document.getElementById("url").value;
         fetch(url)
@@ -26,7 +27,7 @@
             readTimeContainer.innerText = `Estimated reading time: ${readTimeSeconds}${label}`;
           })
           .catch(error => console.error(error));
-      }
+      });
     </script>
   </body>
 </html>
