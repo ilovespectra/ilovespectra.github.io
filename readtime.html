@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Read Time Calculator</title>
+  </head>
+  <body>
+    <h1>Read Time Calculator</h1>
+    <form>
+      <label for="url">Enter the URL of the document:</label><br>
+      <input type="url" id="url" name="url"><br>
+      <button type="button" onclick="calculateReadTime()">Calculate</button>
+    </form>
+    <p id="readtime"></p>
+    <script>
+      function calculateReadTime() {
+        const wordsPerMinute = 200; // Adjust as needed
+        const url = document.getElementById("url").value;
+        fetch(url)
+          .then(response => response.text())
+          .then(text => {
+            const wordCount = text.split(/\s+/g).length;
+            const readTimeMinutes = wordCount / wordsPerMinute;
+            const readTimeSeconds = Math.round(readTimeMinutes * 60);
+            const label = readTimeSeconds === 1 ? ' second' : ' seconds'; // Adjust for pluralization
+            const readTimeContainer = document.getElementById("readtime");
+            readTimeContainer.innerText = `Estimated reading time: ${readTimeSeconds}${label}`;
+          })
+          .catch(error => console.error(error));
+      }
+    </script>
+  </body>
+</html>
