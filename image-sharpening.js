@@ -1,76 +1,76 @@
-function sharpenImage(canvas, context) {
-  var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+function sharpenImage() {
+    var img = new Image();
+    img.onload = function() {
+        // get canvas contexts
+        var canvas = document.getElementById("canvas");
+        var canvasSharpened = document.getElementById("canvasSharpened");
+        var ctx = canvas.getContext("2d");
+        var ctxSharpened = canvasSharpened.getContext("2d");
 
-  var kernel = [
-    [-1, -1, -1],
-    [-1, 9, -1],
-    [-1, -1, -1]
-  ];
+        // calculate new canvas dimensions based on 4K
+        var width = 3840;
+        var height = 3840;
 
-  var factor = 1;
-  var bias = 0;
-  var sum = 0;
-  var weight = 0;
 
-  for (var x = 0; x < imgData.width; ++x) {
-    for (var y = 0; y < imgData.height; ++y) {
-      var r = 0, g = 0, b = 0, a = 0;
 
-      // Apply kernel
-      for (var i = 0; i < kernel.length; ++i) {
-        for (var j = 0; j < kernel[i].length; ++j) {
-          var pixelX = x + i - Math.floor(kernel.length / 2);
-          var pixelY = y + j - Math.floor(kernel[i].length / 2);
+        // set canvas dimensions
+        canvas.width = 3840;
+        canvas.height = 3840;
+        canvasSharpened.width = width;
+        canvasSharpened.height = height;
 
-          if (pixelX >= 0 && pixelX < imgData.width && pixelY >= 0 && pixelY < imgData.height) {
-            var pixelIndex = (pixelY * imgData.width + pixelX) * 4;
+        // draw original image on canvas
+        ctx.drawImage(img, 0, 0, width, height);
 
-            r += imgData.data[pixelIndex] * kernel[i][j];
-            g += imgData.data[pixelIndex + 1] * kernel[i][j];
-            b += imgData.data[pixelIndex + 2] * kernel[i][j];
-            a += imgData.data[pixelIndex + 3] * kernel[i][j];
-          }
+        // apply filter to canvas (This is the magic right hur, fk around, find out.)
+        var filter = [-1, -1, -1, 
+                      -1,  9, -1, 
+                      -1, -1, -1];
+
+        var imageData = ctx.getImageData(0, 0, width, height);
+        var data = imageData.data;
+        var newData = new Uint8ClampedArray(data.length);
+
+        for (var i = 0; i < data.length; i += 4) {
+            var r = data[i];
+            var g = data[i + 1];
+            var b = data[i + 2];
+            var a = data[i + 3];
+
+            var rTotal = 0;
+            var gTotal = 0;
+            var bTotal = 0;
+
+            for (var j = 0; j < filter.length; j++) {
+                var x = (i / 4) % width;
+                var y = Math.floor(i / 4 / width);
+
+                var pixelIndex = ((y + Math.floor(j / 3) - 1) * width + (x + j % 3 - 1)) * 4;
+                if (pixelIndex < 0 || pixelIndex >= data.length) {
+                    continue;
+                }
+
+                rTotal += data[pixelIndex] * filter[j];
+                gTotal += data[pixelIndex + 1] * filter[j];
+                bTotal += data[pixelIndex + 2] * filter[j];
+            }
+
+            newData[i] = rTotal;
+            newData[i + 1] = gTotal;
+            newData[i + 2] = bTotal;
+            newData[i + 3] = a;
         }
-      }
 
-      // Apply factor and bias
-      r = factor * r + bias;
-      g = factor * g + bias;
-      b = factor * b + bias;
-      a = factor * a + bias;
+        imageData.data.set(newData);
+        ctxSharpened.putImageData(imageData, 0, 0);
 
-      // Clamp values to [0, 255]
-      r = Math.min(255, Math.max(0, r));
-      g = Math.min(255, Math.max(0, g));
-      b = Math.min(255, Math.max(0, b));
+        // show sharpened image
+        var downloadLink = document.getElementById("downloadLink");
+        downloadLink.href = canvasSharpened.toDataURL();
+        downloadLink.style.display = "block";
+    };
 
-      // Update image data
-      var pixelIndex = (y * imgData.width + x) * 4;
-      imgData.data[pixelIndex] = r;
-      imgData.data[pixelIndex + 1] = g;
-      imgData.data[pixelIndex + 2] = b;
-      imgData.data[pixelIndex + 3] = a;
-    }
-  }
-
-  context.putImageData(imgData, 0, 0);
-
-  // Resize canvas to 300 pixels resolution
-  var scale = 300 / Math.max(canvas.width, canvas.height);
-  canvas.width *= scale;
-  canvas.height *= scale;
-
-  // Scale image up to 300 pixels resolution
-  var dataUrl = canvas.toDataURL('image/png');
-  var img = new Image();
-  img.onload = function() {
-    canvas.width = 300;
-    canvas.height = 300;
-    context.drawImage(img, 0, 0, canvas.width, canvas.height);
-  };
-  img.src = dataUrl;
-
-  // Set the result as the source of an <img> element
-  var result = document.getElementById('result');
-  result.src = dataUrl;
+    // load image
+    img.src = URL.createObjectURL(document.getElementById("imageFile").files[0]);
 }
+document.getElementById("sharpenButton").addEventListener("click", sharpenImage);
