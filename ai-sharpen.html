@@ -17,12 +17,18 @@
     </p>
     
     <p>
-      <canvas id="canvas" width="300" height="300"></canvas>
+      <div style="display: flex;">
+        <div style="flex: 1;">
+          <img id="before-image" alt="Before" style="max-width: 100%; max-height: 500px;">
+        </div>
+        <div style="flex: 1;">
+          <img id="after-image" alt="After" style="max-width: 100%; max-height: 500px;">
+        </div>
+      </div>
     </p>
     
     <p>
-      <img id="before-image" alt="Before" style="max-width: 300px; max-height: 300px;">
-      <img id="after-image" alt="After" style="max-width: 300px; max-height: 300px;">
+      <canvas id="canvas" width="300" height="300"></canvas>
     </p>
     
     <p>
@@ -46,6 +52,7 @@
             img.onload = function() {
               beforeImage.src = img.src;
               beforeImage.style.display = 'block';
+              afterImage.style.display = 'none';
               sharpenButton.disabled = false;
             };
             img.src = event.target.result;
