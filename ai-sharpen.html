@@ -3,36 +3,69 @@
 <head>
 	<title>Image Sharpening Tool</title>
 	<style>
+		body {
+			background-color: black;
+			color: white;
+			text-align: center;
+		}
+
 		.container {
 			display: flex;
 			flex-wrap: wrap;
 		}
+
 		.canvas-container {
 			flex-basis: 50%;
 			box-sizing: border-box;
 			padding: 10px;
 		}
+
 		canvas {
 			max-width: 100%;
 			height: auto;
 		}
+        .translucent-box {
+        background-color: rgba(35, 19, 46, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+        margin: auto;
+        max-width: 500px;
+        text-align: center;
+    }
+    .translucent-box h1,
+    .translucent-box p,
+    .translucent-box button {
+        color: white;
+    }
+    #sharpenButton {
+    background: linear-gradient(to right, #00ff00, #800080);
+    /* Replace #00ff00 with your desired start color and #800080 with your desired end color */
+    color: white; /* Set text color to white for visibility */
+    padding: 10px 20px; /* Adjust padding to your preference */
+    border: none; /* Remove border to make the button look flat */
+    border-radius: 5px; /* Add some rounded corners for a nicer look */
+}
+
 	</style>
+    
 </head>
 <body>
-	<h1>Image Sharpening Tool</h1>
-	<p>Select an image to upload:</p>
+    <div class="translucent-box">
+	<h1>AI 4K</h1>
+	<p>Select a square PNG</p>
 	<input type="file" id="imageFile" accept=".png">
 	<br><br>
-	<button onclick="sharpenImage()">Sharpen Image</button>
-	<a id="downloadLink" download="sharpened_image.png" style="display:none">Download Sharpened Image</a>
+	<button id="sharpenButton">Enhance</button>
+	<a id="downloadLink" download="sharpened_image.png" style="display:none">Download New Image</a>
 	<br><br>
+</div>
 	<div class="container">
 		<div class="canvas-container">
-			<h2>Original Image:</h2>
+			<h2>Before:</h2>
 			<canvas id="canvas"></canvas>
 		</div>
 		<div class="canvas-container">
-			<h2>Sharpened Image:</h2>
+			<h2>After:</h2>
 			<canvas id="canvasSharpened"></canvas>
 		</div>
 	</div>
@@ -109,6 +142,8 @@
     // load image
     img.src = URL.createObjectURL(document.getElementById("imageFile").files[0]);
 }
+document.getElementById("sharpenButton").addEventListener("click", sharpenImage);
+
 	</script>
 </body>
 </html>
