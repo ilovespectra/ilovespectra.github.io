@@ -1,33 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Sharpen Image with AI</title>
-</head>
-<body>
-  <h1>Sharpen Image with AI</h1>
-
-  <input type="file" accept="image/*" onchange="loadImage(event)">
-
-  <canvas id="canvas"></canvas>
-
-  <img id="result">
-
-  <script>
-    function loadImage(event) {
-      var canvas = document.getElementById('canvas');
-      var context = canvas.getContext('2d');
-      var img = new Image();
-      img.onload = function() {
-        var scale = Math.max(300 / img.width, 300 / img.height);
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
-        sharpenImage(canvas, context);
-      };
-      img.src = URL.createObjectURL(event.target.files[0]);
-    }
-
-    function sharpenImage(canvas, context) {
+  <head>
+    <meta charset="UTF-8">
+    <title>Sharpen Image Example</title>
+  </head>
+  <body>
+    <h1>Sharpen Image Example</h1>
+    
+    <!-- Display the original image -->
+    <h2>Original Image:</h2>
+    <img id="original" src="path/to/your/image.jpg">
+    
+    <!-- Display the sharpened image -->
+    <h2>Sharpened Image:</h2>
+    <canvas id="canvas"></canvas>
+    <img id="result" style="display:none;">
+    
+    <!-- Download button -->
+    <a id="download" href="#">Download Image</a>
+    
+    <!-- Add the sharpenImage function -->
+    <script>
+      function sharpenImage(canvas, context) {
   var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
 
   var kernel = [
@@ -103,7 +97,21 @@
   var result = document.getElementById('result');
   result.src = dataUrl;
 }
-
-  </script>
-</body>
+    </script>
+    
+    <!-- Call the sharpenImage function on page load -->
+    <script>
+      window.onload = function() {
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        var img = document.getElementById('original');
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        
+        sharpenImage(canvas, context);
+      };
+    </script>
+  </body>
 </html>
