@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Image Sharpening Tool</title>
-	<style>
-		body {
-			background-color: black;
-			color: white;
-			text-align: center;
-		}
+    <title>Image Sharpening Tool</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+        }
 
-		.container {
-			display: flex;
-			flex-wrap: wrap;
-		}
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
 
-		.canvas-container {
-			flex-basis: 50%;
-			box-sizing: border-box;
-			padding: 10px;
-		}
+        .canvas-container {
+            flex-basis: 50%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
 
-		canvas {
-			max-width: 100%;
-			height: auto;
-		}
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
         .translucent-box {
         background-color: rgba(35, 19, 46, 0.5);
         padding: 20px;
@@ -46,31 +46,31 @@
     border-radius: 5px; /* Add some rounded corners for a nicer look */
 }
 
-	</style>
+    </style>
     
 </head>
 <body>
     <div class="translucent-box">
-	<h1>AI 4K</h1>
-	<p>Select a square PNG</p>
-	<input type="file" id="imageFile" accept=".png">
-	<br><br>
-	<button id="sharpenButton">Enhance</button>
-	<a id="downloadLink" download="sharpened_image.png" style="display:none">Download New Image</a>
-	<br><br>
+    <h1>8K Rerender</h1>
+	    <p>Select a square PNG. <i>Please be patient after clicking Enhance, this can take some time!</i></p>
+    <input type="file" id="imageFile" accept=".png">
+    <br><br>
+    <button id="sharpenButton">Enhance</button>
+    <a id="downloadLink" download="sharpened_image.png" style="display:none">Download New Image</a>
+    <br><br>
 </div>
-	<div class="container">
-		<div class="canvas-container">
-			<h2>Before:</h2>
-			<canvas id="canvas"></canvas>
-		</div>
-		<div class="canvas-container">
-			<h2>After:</h2>
-			<canvas id="canvasSharpened"></canvas>
-		</div>
-	</div>
-	<script>
-		function sharpenImage() {
+    <div class="container">
+        <div class="canvas-container">
+            <h2>Before:</h2>
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="canvas-container">
+            <h2>After:</h2>
+            <canvas id="canvasSharpened"></canvas>
+        </div>
+    </div>
+    <script>
+        function sharpenImage() {
     var img = new Image();
     img.onload = function() {
         // get canvas contexts
@@ -79,17 +79,16 @@
         var ctx = canvas.getContext("2d");
         var ctxSharpened = canvasSharpened.getContext("2d");
 
-        // calculate new canvas dimensions based on 4K
-        var width = 3840;
-        var height = 3840;
-
-
+        // calculate new canvas dimensions based on 8K
+        var width = 7680;
+        var height = 7680;
 
         // set canvas dimensions
-        canvas.width = 3840;
-        canvas.height = 3840;
+        canvas.width = width;
+        canvas.height = height;
         canvasSharpened.width = width;
         canvasSharpened.height = height;
+
 
         // draw original image on canvas
         ctx.drawImage(img, 0, 0, width, height);
@@ -142,6 +141,7 @@
     // load image
     img.src = URL.createObjectURL(document.getElementById("imageFile").files[0]);
 }
+
 document.getElementById("sharpenButton").addEventListener("click", sharpenImage);
 
 	</script>
