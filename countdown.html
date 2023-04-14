@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Helium =&gt; Solana Countdown</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        background-image: url('background.png');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        font-family: 'Courier New', sans-serif;
+        font-size: 40px;
+        position: relative;
+      }
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .countdown h3 {
+            margin: 0;
+        }
+        
+        .countdown .time-number {
+            font-weight: bold;
+            font-size: 50px;
+        }
+        </style>
+        </head>
+        <body>
+        <div id="countdown-container"></div>
+        <script>
+  const countdownContainer = document.getElementById('countdown-container');
+
+  const migrationCountdownDate = new Date('April 18, 2023 10:00:00').getTime();
+  let migrationStarted = false;
+
+  const updateCountdown = () => {
+    const now = new Date().getTime();
+    const migrationDistance = migrationCountdownDate - now;
+
+    const days = Math.floor(migrationDistance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((migrationDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((migrationDistance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((migrationDistance % (1000 * 60)) / 1000);
+
+    if (migrationDistance < 0) {
+      clearInterval(x);
+      migrationStarted = true;
+      renderMigrationStarted();
+    } else {
+      renderCountdown({ days, hours, minutes, seconds });
+    }
+  }
+
+  const renderCountdown = (countdown) => {
+    const countdownHTML = `
+      <div class="countdown">
+        <h3>Helium =&gt; Solana Countdown:</h3>
+        <div>
+          <span class="time-number">${countdown.days}</span> days
+          <span class="time-number">${countdown.hours}</span> hours
+          <span class="time-number">${countdown.minutes}</span> minutes
+          <span class="time-number">${countdown.seconds}</span> seconds
+        </div>
+      </div>
+    `;
+    countdownContainer.innerHTML = countdownHTML;
+  }
+
+  const renderMigrationStarted = () => {
+    const migrationStartedHTML = `
+      <div class="countdown">
+        <h3>The Helium x Solana migration has begun!</h3>
+      </div>
+    `;
+    countdownContainer.innerHTML = migrationStartedHTML;
+  }
+
+  updateCountdown();
+  const x = setInterval(updateCountdown, 1000);
+</script>
+ </body>
+</html>
