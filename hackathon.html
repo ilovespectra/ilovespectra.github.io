@@ -17,6 +17,7 @@
     </nav>
     
     <style>
+     
       nav ul {
         display: flex;
         justify-content: center;
@@ -136,8 +137,16 @@
         margin-top: 20px;
       }
 
+      @media screen and (max-width: 768px) {
+        .nav-links li {
+         flex-direction: column;
+      }
+
       li {
-        margin-bottom: 8px;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+
       }
 
       li span {
@@ -311,6 +320,10 @@ function openForm2() {
               <input type="email" name="email" style="background-color: #333; color: #ff8300;">
             </label>
             <label>
+              company name:
+              <input type="text" name="company" style="background-color: #333; color: #ff8300;">
+            </label>
+            <label>
               why do you want to contribute?:
               <textarea name="why do you want to contribute?" rows="10" cols="50" style="background-color: #333; color: #ff8300;"></textarea>
             </label>
@@ -458,6 +471,10 @@ function openForm() {
         project name:
         <input type="text" name="project" style="width: 200px;" style="background-color: #333; color: #ff8300;">
       </label>
+      <label>
+              github:
+              <input type="text" name="github" style="background-color: #333; color: #ff8300;">
+            </label>
       <br>
       <label>
     track:
@@ -550,7 +567,7 @@ function openForm() {
       <h2>judging criteria</h2>
       <p>projects will be evaluated based on the following criteria:</p>
       <li>innovation: how creative and original is the idea?</li>
-      <li>impact: What is the potential impact of the project?</li>
+      <li>impact: what is the potential impact of the project?</li>
       <li>technical execution: how well is the idea implemented technically?</li>
       <li>presentation: how well is the project presented and explained?</li>
       </script>
