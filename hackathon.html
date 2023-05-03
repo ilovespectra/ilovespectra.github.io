@@ -1,13 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
-  <div class="header">
-    <img src="https://cdn.discordapp.com/attachments/1051281685234327613/1102759904730677328/image.png" alt="header">
-  </div>  
+<html lang="en">  
   <head>
+    <div class="social-icons">
+      <a href="https://twitter.com/hntdenver"><img src="https://cdn.discordapp.com/attachments/1051281685234327613/1103125446234738758/twi.png" alt="twitter icon"></a>
+    </div>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>helium hackathon 1.0</title>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="hackathon.html">home</a></li>
+        <li><a href="aboutus.html">about</a></li>
+        <li><a href="rules.html">rules</a></li>
+        <li><a href="contact.html">contact</a></li>
+      </ul>
+    </nav>
+    
     <style>
+      nav ul {
+        display: flex;
+        justify-content: center;
+        color: black;
+      }
+
+      nav li {
+        padding: 0 50px;
+      }
+      .nav-links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgb(41, 41, 41);
+        padding: 12px;
+      }
+
+      .nav-links li {
+        list-style: none;
+      }
+
+      .nav-links li a {
+        color: white;
+        text-decoration: none;
+        padding: 8px;
+        border: 1px solid white;
+        border-radius: 10%;
+        display: inline-block;
+        background-color: white;
+        color: #000000;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .nav-links li a:hover {
+        background-color: black;
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .social-icons {
+        position: auto;
+        top: 0;
+        right: 0;
+      }
+
+      .social-icons a {
+        display: inline-block;
+        margin: 10px;
+        margin-right: 10px;
+        margin-top: 40px;
+        border: 1px solid white;
+        border-radius: 50%;
+        padding: 10px;
+      }
+
+      .social-icons a:hover {
+        background-color: white;
+        color: white;
+        box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+      }
       .header img {
         width: 100%;
         height: auto;
@@ -17,7 +91,7 @@
         font-family: Inter, sans-serif;
         margin: 0;
         padding: 0;
-        color: #FFA500;
+        color: white;
       }
 
       .container {
@@ -29,7 +103,7 @@
       h1 {
         font-size: 36px;
         font-weight: 800;
-        margin-top: 0;
+        margin-top: 40px;
       }
 
       h2 {
@@ -40,7 +114,7 @@
 
       .button {
         display: inline-block;
-        background-color: #FFA500;
+        background-color: white;
         color: #000000;
         font-weight: bold;
         text-decoration: none;
@@ -51,7 +125,7 @@
       }
 
       .button:hover {
-        background-color: #ffa02f;
+        background-color: black;
         transform: translateY(-2px);
       }
 
@@ -265,7 +339,7 @@ function openForm2() {
         <li><strong>iot solutions</strong> - <br><br>the iot solution track of the helium hackathon focuses on projects that leverage helium's decentralized wireless network to deploy personal or scalable solutions using lorawan sensors.
 
           participants in this track may develop a wide range of iot solutions, such as smart home devices, environmental sensors, industrial monitoring systems, and more. The track offers a lot of flexibility for participants to showcase their creativity and innovative thinking in developing IoT solutions that make use of Helium's network capabilities.</li>
-        <br><li><strong>helium xnfts on solana</strong> - <br><br>the helium xnfts on solana track focuses on the creation of unique and innovative non-fungible tokens (nft) that leverage helium's decentralized wireless network and solana's smart program capabilities. the goal is to create executable NFTs, or smart programs, that provide functionality to decentralized applications (dapps) that improve user experience for the helium community. <br><br>this can include but is not limited to solutions that enhance the functionality of the helium wallet, improve the tracking and management of devices on the helium network, or enhance the accessibility and usability of the helium ecosystem as a whole. the track is open to developers and creators who want to explore the intersection of helium and solana and build cutting-edge solutions that push the boundaries of what's possible in the world of decentralized applications.</li>
+        <br><li><strong>helium xnfts / dapps on solana</strong> - <br><br>the helium xnfts on solana track focuses on the creation of unique and innovative non-fungible tokens (nft) that leverage helium's decentralized wireless network and solana's smart program capabilities. the goal is to create decentralized apps (dapps), executable NFTs, or other utilities or programs that provide functionality to dapps that improve user experience for the helium community. <br><br>this can include but is not limited to solutions that enhance the functionality of the helium wallet, improve the tracking and management of devices on the helium network, or enhance the accessibility and usability of the helium ecosystem as a whole. the track is open to developers and creators who want to explore the intersection of helium and solana and build cutting-edge solutions that push the boundaries of what's possible in the world of decentralized applications.</li>
       </ul><br>
       <h4>deadlines for submissions: may 19</h4>
       <p>participants will have 6 weeks to network, create, launch, observe, learn, and repeat as necessary! we will provide networking, mentorship, and educational resources over the 6 weeks to help ensure a successful launch for each of our contestants. <b>you can participate from anywhere in the world, but you must be present to win!</b></p>
@@ -425,7 +499,7 @@ function openForm() {
 </script>
 
       <h2>prizes</h2>
-      <p>90% of the donated funding goes to prize pot, 10% to event planning. <br>itemized expenditures available in the <a href="https://discord.gg/9PZpqtRPPb">heliumlava discord</a>
+      <p>90% of the donated funding goes to prize pot, 10% to event planning. <br>itemized expendetures avaialble in the <a href="https://discord.gg/9PZpqtRPPb">heliumlava discord</a>
       </p>
       <h4>the pot is split as follows</h4>
       <table>
@@ -476,7 +550,7 @@ function openForm() {
       <h2>judging criteria</h2>
       <p>projects will be evaluated based on the following criteria:</p>
       <li>innovation: how creative and original is the idea?</li>
-      <li>impact: what is the potential impact of the project?</li>
+      <li>impact: What is the potential impact of the project?</li>
       <li>technical execution: how well is the idea implemented technically?</li>
       <li>presentation: how well is the project presented and explained?</li>
       </script>
@@ -499,3 +573,5 @@ function openForm() {
       buy me a coffee, tanny.sol (resolves to `Cj1jScR4V73qLmvWJiGiWs9jtcwCXEZsmS5cevWt9jNc`)
     </body>
   </html>
+
+  
