@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>subs deadline</title>
+  <link href="https://fonts.cdnfonts.com/css/alarm-clock" rel="stylesheet">
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      text-align: center;
+      font-family: 'courier new', sans-serif;
+      font-size: 40px;
+      background-size: 1000px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .time-number {
+      font-family: 'alarm clock', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h3>heliumdenver hackathon: subs deadline:</h3>
+  <div id="deadline-countdown"></div>
+  <script>
+    var deadlineCountdownDate = new Date("May 26, 2023 23:59:59").getTime();
+    var x = setInterval(function() {
+      var now = new Date().getTime();
+      
+      var deadlineDistance = deadlineCountdownDate - now;
+
+
+      var deadlineDays = Math.floor(deadlineDistance / (1000 * 60 * 60 * 24));
+      var deadlineHours = Math.floor((deadlineDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var deadlineMinutes = Math.floor((deadlineDistance % (1000 * 60 * 60)) / (1000 * 60));
+      var deadlineSeconds = Math.floor((deadlineDistance % (1000 * 60)) / 1000);
+
+      document.getElementById("deadline-countdown").innerHTML =
+        '<span class="time-number">' + deadlineDays + '</span> days ' +
+        '<span class="time-number">' + deadlineHours + '</span> hours ' +
+        '<span class="time-number">' + deadlineMinutes + '</span> minutes ' +
+        '<span class="time-number">' + deadlineSeconds + '</span> seconds ';
+
+      if (deadlineDistance < 0) {
+        clearInterval(x);
+        document.getElementById("deadline-countdown").innerHTML = "submissions are closed!";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
