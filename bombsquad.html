@@ -47,11 +47,28 @@
         max-width: calc(100vw / 4);
         height: auto;
       }
+      .explorer-frame {
+        width: 100%;
+        max-width: calc(100vw / 2);
+        height: 600px;
+        overflow: hidden;
+        margin: 0 auto;
+      }
+      .explorer-frame2 {
+        width: 700px;
+        height: 200px;
+        overflow: hidden;
+        margin: 0 auto;
+      }
     </style>
+
   </head>
   <body>
     <div class="container">
       <h1>hnt denver - bomb squad</h1>
+      <div class="explorer-frame2">
+        <iframe id="explorer-frame" src="https://ilovespectra.github.io/self-destruct.html" width="100%" height="100%"></iframe>
+      </div>
       <ul>
         <li>
           <img src="https://media.discordapp.net/attachments/1051281685234327613/1118324864940507276/bombsquad_mainnet.png?width=1007&height=990" alt="Bomb Squad QR Code" class="qr-code">
@@ -60,6 +77,9 @@
           <p>Goal: ~100 SOL</p>
           <p>Deadline: 12pm 7/7/23</p>
         </li>
+        <div class="explorer-frame">
+        <iframe src="https://explorer.solana.com/address/5tZoBbPXP2y6NbBf4VYtayYewXaWPStyNZnYDL1tsTaH" width="100%" height="100%"></iframe>
+      </div>
       </ul>
     </div>
   </body>
