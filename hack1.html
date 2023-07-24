@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memory Machine Hack</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background-color: black;
+            border: 2px solid white; /* White border around the game board */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            position: relative;
+            background-color: grey;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px; /* Rounded edges for the modal */
+            font-family: "Courier New", monospace;
+            color: green;
+            background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.2) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0.2)), linear-gradient(45deg, rgba(0, 0, 0, 0.2) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0.2)); /* Diagonally striped background */
+            background-size: 4px 4px;
+        }
+        .message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .locked-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.7); /* Red background */
+            z-index: 1;
+            justify-content: center;
+            align-items: center;
+            font-family: "Courier New", monospace;
+            color: white;
+            font-size: 48px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="message-box">
+                <h1>Hack Successful!</h1>
+                <p>Password: "ilovebunny"</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- New failed modal -->
+    <div id="failedModal" class="modal" onclick="attemptFailed()">
+        <div class="modal-content">
+            <div class="message-box">
+                <h1>Hack Failed!</h1> 
+                <p>Incorrect Password. Remaining attempts: <span id="remainingAttempts">3</span></p> 
+                <p>Click anywhere to retry</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="locked-modal" id="lockedModal">
+        <center>
+        <h1>LOCKED</h1>
+        <h2>0 ATTEMPTS REMAINING</h2>
+    </center>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const paddleWidth = 100;
+        const paddleHeight = 10;
+        const ballRadius = 10;
+        const blockWidth = 100;
+        const blockHeight = 30;
+        const blockRowCount = 1;
+        const blockColumnCount = 3;
+
+        let paddleX = (canvas.width - paddleWidth) / 2;
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height - 30;
+        let ballSpeedX = 12; // Faster initial speed
+        let ballSpeedY = -12; // Faster initial speed
+
+        let blocks = [];
+        for (let c = 0; c < blockColumnCount; c++) {
+            blocks[c] = [];
+            for (let r = 0; r < blockRowCount; r++) {
+                blocks[c][r] = { x: 0, y: 0, status: 1 };
+            }
+        }
+
+        let attempts = 3;
+
+        function attemptFailed() {
+            if (attempts > 0) {
+                document.getElementById('failedModal').style.display = 'none';
+                ballSpeedX = 12; // Faster initial speed
+                ballSpeedY = -12; // Faster initial speed
+                setTimeout(() => {
+                    draw();
+                }, 100);
+            }
+
+            if (attempts === 0) {
+                document.getElementById('failedModal').style.display = 'none';
+                document.getElementById('lockedModal').style.display = 'flex';
+            }
+        }
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle() {
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawBlocks() {
+            const boardWidth = blockColumnCount * (blockWidth + 10);
+            const boardX = (canvas.width - boardWidth) / 2;
+            const boardY = 30;
+
+            for (let c = 0; c < blockColumnCount; c++) {
+                for (let r = 0; r < blockRowCount; r++) {
+                    if (blocks[c][r].status === 1) {
+                        const blockX = boardX + c * (blockWidth + 10);
+                        const blockY = boardY + r * (blockHeight + 10);
+                        blocks[c][r].x = blockX;
+                        blocks[c][r].y = blockY;
+                        ctx.beginPath();
+                        ctx.rect(blockX, blockY, blockWidth, blockHeight);
+                        ctx.fillStyle = "green";
+                        ctx.fill();
+                        ctx.closePath();
+                    }
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+            drawPaddle();
+            drawBlocks();
+
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+
+            if (ballSpeedX === 0 && ballSpeedY === 0) {
+                return; // Game ended, stop updating
+            }
+
+            // Ball bouncing off the walls
+            if (ballX + ballRadius >= canvas.width || ballX - ballRadius <= 0) {
+                ballSpeedX = -ballSpeedX;
+            }
+            if (ballY - ballRadius <= 0) {
+                ballSpeedY = -ballSpeedY;
+            }
+
+            // Ball bouncing off the paddle
+            if (ballY + ballRadius >= canvas.height - paddleHeight) {
+                if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+                    const collisionPoint = ballX - (paddleX + paddleWidth / 2);
+                    ballSpeedX = collisionPoint * 0.2; // Adjust the ball's speed based on the collision point
+                    ballSpeedY = -ballSpeedY;
+                } else {
+                    // Ball falls below the paddle
+                    ballSpeedX = 0;
+                    ballSpeedY = 0;
+                    attempts--;
+                    document.getElementById('remainingAttempts').textContent = attempts;
+                    if (attempts === 0) {
+                        setTimeout(() => {
+                            document.getElementById('lockedModal').style.display = 'flex';
+                        }, 1000);
+                    } else {
+                        setTimeout(() => {
+                            document.getElementById('failedModal').style.display = 'flex';
+                        }, 1000);
+                    }
+                }
+            }
+
+            // Collision detection with blocks
+            for (let c = 0; c < blockColumnCount; c++) {
+                for (let r = 0; r < blockRowCount; r++) {
+                    const block = blocks[c][r];
+                    if (block.status === 1) {
+                        if (ballX > block.x && ballX < block.x + blockWidth && ballY > block.y && ballY < block.y + blockHeight) {
+                            ballSpeedY = -ballSpeedY;
+                            block.status = 0;
+                        }
+                    }
+                }
+            }
+
+            // Check if all blocks are destroyed
+            let blocksLeft = blocks.reduce((acc, row) => acc + row.reduce((a, b) => a + b.status, 0), 0);
+            if (blocksLeft === 0) {
+                ballSpeedX = 0;
+                ballSpeedY = 0;
+                document.getElementById('successModal').style.display = 'flex';
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        function resetGame() {
+            attempts = 3;
+            document.getElementById('successModal').style.display = 'none';
+            document.getElementById('failedModal').style.display = 'none';
+            document.getElementById('lockedModal').style.display = 'none';
+            paddleX = (canvas.width - paddleWidth) / 2;
+            ballX = canvas.width / 2;
+            ballY = canvas.height - 30;
+            ballSpeedX = 14; // Faster initial speed
+            ballSpeedY = -14; // Faster initial speed
+            blocks.forEach((column) => {
+                column.forEach((block) => {
+                    block.status = 1;
+                });
+            });
+            draw();
+        }
+
+        canvas.addEventListener("mousemove", (e) => {
+            const relativeX = e.clientX - canvas.offsetLeft;
+            paddleX = Math.min(Math.max(relativeX - paddleWidth / 2, 0), canvas.width - paddleWidth);
+        });
+
+        draw();
+    </script>
+</body>
+</html>
