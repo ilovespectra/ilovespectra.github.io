@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Top-Down Shooter Game</title>
+    <title>Bolton's Memory Machine</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
             background-color: black;
+            font-family: "Courier New", monospace;
         }
         canvas {
             display: block;
@@ -27,13 +28,14 @@
         }
         .modal-content {
             position: relative;
-            background-color: grey;
+            background-color: black;
             padding: 20px;
             text-align: center;
             border-radius: 10px;
             font-family: "Courier New", monospace;
-            color: white;
+            color: green;
             font-size: 30px;
+            border: 2px solid green;
         }
         .modal-button {
             padding: 10px 20px;
@@ -47,20 +49,27 @@
         .modal-button:hover {
             background-color: darkgreen;
         }
+        .title {
+            font-family: Arial, sans-serif;
+            font-size: 50px;
+            font-weight: bold;
+            color: green;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-
+    <div class="title">Bolton's Memory Machine</div>
+    <canvas id="gameCanvas" width="650" height="500"></canvas>
+    
     <!-- Hacking Complete Modal -->
     <div class="modal" id="hackingCompleteModal">
         <div class="modal-content">
             <h1>Hacking Complete</h1>
-            <p>Password: ilovebunny</p>
-            <button class="modal-button" onclick="redirectToPasswordGate()">Enter Password</button>
+            <button class="modal-button" onclick="redirectToPasswordGate()">Enter Memory</button>
         </div>
     </div>
-
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -99,6 +108,24 @@
                         destroyed: false,
                     });
                 }
+            }
+        }
+
+        function drawGrid() {
+            const gridSize = 50;
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
             }
         }
 
@@ -197,6 +224,7 @@
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
             drawSquares();
             drawPlayer();
             drawBullets();
@@ -269,7 +297,7 @@
         }
 
         function redirectToPasswordGate() {
-            window.location.href = 'https://ilovespectra.github.io/passwordgate2.html';
+            window.location.href = 'https://theportal.to/?room=68b33f7c-dded-49e5-bee9-8cfcb6a9adf1&spawn=boltonmemory';
         }
 
         draw();
