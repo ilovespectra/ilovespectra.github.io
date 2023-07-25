@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Top-Down Shooter Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 2px solid white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            position: relative;
+            background-color: grey;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            font-family: "Courier New", monospace;
+            color: white;
+            font-size: 30px;
+        }
+        .modal-button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: green;
+            color: white;
+            cursor: pointer;
+        }
+        .modal-button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <!-- Hacking Complete Modal -->
+    <div class="modal" id="hackingCompleteModal">
+        <div class="modal-content">
+            <h1>Hacking Complete</h1>
+            <p>Password: ilovebunny</p>
+            <button class="modal-button" onclick="redirectToPasswordGate()">Enter Password</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const playerSize = 30;
+        const playerSpeed = 10;
+        const bulletSpeed = 20;
+        const bulletSize = 5;
+        const squareSize = 60;
+        const circleSize = 30;
+        const boundaryMargin = 20;
+
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - playerSize,
+            angle: -Math.PI / 2,
+            dx: 0, // Ship's horizontal drift
+            dy: 0, // Ship's vertical drift
+        };
+
+        let bullets = [];
+        let squares = [];
+        let circleColor = 'green';
+        let circleDestroyed = false;
+        let hackingComplete = false;
+
+        // Create squares in a 3x3 grid around the circle
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                const isCircle = i === 0 && j === 0;
+                if (!isCircle) {
+                    squares.push({
+                        x: canvas.width / 2 + i * squareSize * 1.2,
+                        y: canvas.height / 2 + j * squareSize * 1.2,
+                        color: 'blue',
+                        destroyed: false,
+                    });
+                }
+            }
+        }
+
+        function drawPlayer() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.angle);
+
+            ctx.beginPath();
+            ctx.moveTo(playerSize, 0);
+            ctx.lineTo(-playerSize / 2, playerSize);
+            ctx.lineTo(-playerSize / 2, -playerSize);
+            ctx.closePath();
+            ctx.fillStyle = 'white';
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawSquares() {
+            squares.forEach(square => {
+                if (!square.destroyed) {
+                    ctx.fillStyle = square.color;
+                    ctx.fillRect(square.x - squareSize / 2, square.y - squareSize / 2, squareSize, squareSize);
+                }
+            });
+        }
+
+        function drawBullets() {
+            ctx.fillStyle = 'white';
+            bullets.forEach(bullet => {
+                ctx.beginPath();
+                ctx.arc(bullet.x, bullet.y, bulletSize, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        function movePlayer() {
+            if (keys['ArrowUp'] || keys['KeyW']) {
+                player.dy = Math.max(player.dy - 1, -playerSpeed);
+            }
+            if (keys['ArrowDown'] || keys['KeyS']) {
+                player.dy = Math.min(player.dy + 1, playerSpeed);
+            }
+            if (keys['ArrowLeft'] || keys['KeyA']) {
+                player.dx = Math.max(player.dx - 1, -playerSpeed);
+            }
+            if (keys['ArrowRight'] || keys['KeyD']) {
+                player.dx = Math.min(player.dx + 1, playerSpeed);
+            }
+
+            // Apply drift
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Deceleration
+            player.dx *= 0.9;
+            player.dy *= 0.9;
+        }
+
+        function shootBullet() {
+            const bullet = {
+                x: player.x,
+                y: player.y,
+                dx: Math.cos(player.angle) * bulletSpeed,
+                dy: Math.sin(player.angle) * bulletSpeed,
+            };
+            bullets.push(bullet);
+        }
+
+        let keys = {};
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            player.angle = Math.atan2(mouseY - player.y, mouseX - player.x);
+        });
+
+        let firing = false;
+        canvas.addEventListener('mousedown', () => {
+            firing = true;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            firing = false;
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSquares();
+            drawPlayer();
+            drawBullets();
+
+            if (firing) {
+                shootBullet();
+            }
+
+            movePlayer();
+            bullets.forEach(bullet => {
+                bullet.x += bullet.dx;
+                bullet.y += bullet.dy;
+                // Remove bullets when they reach the canvas boundaries
+                if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                    bullets.splice(bullets.indexOf(bullet), 1);
+                }
+            });
+
+            // Check for bullet collisions with squares and circle
+            bullets.forEach(bullet => {
+                squares.forEach(square => {
+                    if (!square.destroyed && bullet.x > square.x - squareSize / 2 &&
+                        bullet.x < square.x + squareSize / 2 &&
+                        bullet.y > square.y - squareSize / 2 &&
+                        bullet.y < square.y + squareSize / 2) {
+                        square.color = 'yellow';
+                        setTimeout(() => {
+                            square.color = 'red';
+                        }, 500);
+                        setTimeout(() => {
+                            square.destroyed = true;
+                            square.color = 'transparent';
+                        }, 1000);
+                        bullet.x = -100; // Move the bullet off-screen
+                    }
+                });
+
+                const circleX = canvas.width / 2;
+                const circleY = canvas.height / 2;
+                if (!circleDestroyed && !squares.some(square => !square.destroyed) &&
+                    bullet.x > circleX - circleSize / 2 &&
+                    bullet.x < circleX + circleSize / 2 &&
+                    bullet.y > circleY - circleSize / 2 &&
+                    bullet.y < circleY + circleSize / 2) {
+                    circleColor = 'lightgreen';
+                    setTimeout(() => {
+                        circleColor = 'white';
+                    }, 500);
+                    setTimeout(() => {
+                        circleDestroyed = true;
+                        // Show "Hacking Complete" message
+                        const hackingCompleteModal = document.getElementById('hackingCompleteModal');
+                        hackingCompleteModal.style.display = 'flex';
+                        hackingComplete = true;
+                    }, 1000);
+                    bullet.x = -100; // Move the bullet off-screen
+                }
+            });
+
+            // Draw the circle if it is not destroyed
+            if (!circleDestroyed) {
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, canvas.height / 2, circleSize, 0, Math.PI * 2);
+                ctx.fillStyle = circleColor;
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        function redirectToPasswordGate() {
+            window.location.href = 'https://ilovespectra.github.io/passwordgate2.html';
+        }
+
+        draw();
+    </script>
+</body>
+</html>
