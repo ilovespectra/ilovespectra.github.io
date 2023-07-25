@@ -44,8 +44,7 @@
     <!-- Hacking Complete Modal -->
     <div class="modal" id="hackingCompleteModal">
         <div class="modal-content">
-            <h4>Hacking Complete</h4>
-            <p>Secret Password: **********</p>
+            <h1>Hacking Complete</h1>
         </div>
     </div>
 
@@ -65,6 +64,8 @@
             x: canvas.width / 2,
             y: canvas.height - playerSize,
             angle: -Math.PI / 2,
+            dx: 0, // Ship's horizontal drift
+            dy: 0, // Ship's vertical drift
         };
 
         let bullets = [];
@@ -89,13 +90,19 @@
         }
 
         function drawPlayer() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.angle);
+
             ctx.beginPath();
-            ctx.moveTo(player.x + playerSize * Math.cos(player.angle), player.y + playerSize * Math.sin(player.angle));
-            ctx.lineTo(player.x + playerSize * Math.cos(player.angle - 2 * Math.PI / 3), player.y + playerSize * Math.sin(player.angle - 2 * Math.PI / 3));
-            ctx.lineTo(player.x + playerSize * Math.cos(player.angle + 2 * Math.PI / 3), player.y + playerSize * Math.sin(player.angle + 2 * Math.PI / 3));
+            ctx.moveTo(playerSize, 0);
+            ctx.lineTo(-playerSize / 2, playerSize);
+            ctx.lineTo(-playerSize / 2, -playerSize);
             ctx.closePath();
             ctx.fillStyle = 'white';
             ctx.fill();
+
+            ctx.restore();
         }
 
         function drawSquares() {
@@ -119,17 +126,25 @@
 
         function movePlayer() {
             if (keys['ArrowUp'] || keys['KeyW']) {
-                player.y = Math.max(player.y - playerSpeed, boundaryMargin);
+                player.dy = Math.max(player.dy - 1, -playerSpeed);
             }
             if (keys['ArrowDown'] || keys['KeyS']) {
-                player.y = Math.min(player.y + playerSpeed, canvas.height - playerSize - boundaryMargin);
+                player.dy = Math.min(player.dy + 1, playerSpeed);
             }
             if (keys['ArrowLeft'] || keys['KeyA']) {
-                player.x = Math.max(player.x - playerSpeed, boundaryMargin);
+                player.dx = Math.max(player.dx - 1, -playerSpeed);
             }
             if (keys['ArrowRight'] || keys['KeyD']) {
-                player.x = Math.min(player.x + playerSpeed, canvas.width - boundaryMargin);
+                player.dx = Math.min(player.dx + 1, playerSpeed);
             }
+
+            // Apply drift
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Deceleration
+            player.dx *= 0.9;
+            player.dy *= 0.9;
         }
 
         function shootBullet() {
