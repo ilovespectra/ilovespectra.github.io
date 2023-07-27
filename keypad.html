@@ -3,6 +3,7 @@
 <head>
     <title>Guard's Quarters Door Code</title>
     <style>
+        /* Set the background image */
         body {
             margin: 0;
             padding: 0;
@@ -11,8 +12,10 @@
             align-items: center;
             height: 100vh;
             font-family: "Courier New", monospace;
-            background-color: black;
-            color: green;
+            background-image: url('https://media.discordapp.net/attachments/1051281685234327613/1134142069301063720/image.png?width=686&height=450');
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: whitesmoke;
             font-size: 24px;
         }
 
@@ -20,7 +23,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color:black;
             font-family: "Courier New", monospace;
         }
 
@@ -41,7 +43,7 @@
             text-align: center;
             border-radius: 6px;
             background-color: #333;
-            color:red;
+            color: yellow;
             cursor: pointer;
             font-family: "Courier New", monospace;
             box-shadow: 0px 6px #111;
@@ -59,11 +61,59 @@
             margin-top: 10px;
             font-family: "Courier New", monospace;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            border: 1px solid green;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 128, 0, 0.5);
+        }
+
+        .modal-text {
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .modal-button {
+            background-color: black;
+            border: 2px solid green;
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .modal-button:hover {
+            background-color: green;
+            color: black;
+        }
     </style>
 </head>
 <body>
     <div id="passwordForm">
-        <label for="password">Enter Door Code:</label>
+        <label for="password"></label>
         <input type="password" id="password" maxlength="8" required>
         <br><br>
         <div id="keypadContainer">
@@ -83,8 +133,15 @@
         <p id="errorMessage"></p>
     </div>
 
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-text">Incorrect password. You have <span id="attemptsLeft">3</span> attempt(s) left.</div>
+            <button class="modal-button" id="okButton">OK</button>
+        </div>
+    </div>
+
     <script>
-        const correctPassword = '64915725';
+        const correctPassword = '12345678';
         const beepSound = new Audio('https://cdn.glitch.global/2e423b6b-bd48-4c82-b6bc-e766d7cc586b/tone2.wav?v=1690331901406');
         let remainingAttempts = 3;
         let doorOpened = false;
@@ -107,15 +164,22 @@
         function handlePoundKey(enteredPassword) {
             if (enteredPassword === correctPassword) {
                 doorOpened = true;
-                window.location.href = 'https://theportal.to/?room=060c72d7-f535-4544-bd65-af5dda5108dd&spawn=apt';
+                window.location.href = 'https://theportal.to/?room=68b33f7c-dded-49e5-bee9-8cfcb6a9adf1&spawn=hall';
             } else {
-                const errorMessage = document.getElementById('errorMessage');
                 remainingAttempts--;
 
                 if (remainingAttempts > 0) {
-                    errorMessage.textContent = `Incorrect password. You have ${remainingAttempts} attempt(s) left.`;
+                    // Show the modal with attempts left
+                    const modal = document.getElementById('modal');
+                    const attemptsLeftSpan = document.getElementById('attemptsLeft');
+                    attemptsLeftSpan.textContent = remainingAttempts;
+                    modal.style.display = 'block';
                 } else {
-                    errorMessage.textContent = 'Access denied. Please contact support.';
+                    // Show the modal with access denied
+                    const modal = document.getElementById('modal');
+                    const modalText = document.querySelector('.modal-text');
+                    modalText.textContent = 'Access denied. Please contact support.';
+                    modal.style.display = 'block';
                     disableKeypad();
                 }
 
@@ -153,6 +217,13 @@
                 document.body.classList.remove('using-mouse');
                 muteBeepSound();
             }
+        });
+
+        const okButton = document.getElementById('okButton');
+        okButton.addEventListener('click', function () {
+            // Hide the modal when OK is clicked
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
         });
     </script>
 </body>
