@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sine Wave Matching Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: black;
+    }
+
+    .computer-screen {
+      background-image: url('https://cdn.discordapp.com/attachments/1051281685234327613/1134129792195768360/screen.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      width: 700px; /* Adjust the size of the computer screen */
+      height: 500px; /* Adjust the size of the computer screen */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px; /* Add margin to create the computer screen border */
+      padding: 20px; /* Add padding to separate content from border */
+    }
+
+    .gameboard {
+      text-align: center;
+      position: relative;
+      width: 68%;
+      height: 59%;
+    }
+
+    canvas {
+      border: 1px solid black;
+      background-color: black;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Knob styles */
+    .knob-wrapper {
+      display: inline-block;
+      position: relative;
+      margin: 10px;
+    }
+
+    .knob {
+      width: 60px;
+      height: 60px;
+      appearance: none;
+      border: none;
+      background-color: black;
+      border-radius: 50%;
+      transform-origin: center center;
+      transform: rotate(-45deg);
+      box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.3), 0 -2px 2px rgba(255, 255, 255, 0.3);
+    }
+
+    .knob::-webkit-slider-thumb {
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      background-color: black;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .knob::-webkit-slider-thumb:hover {
+      background-color: rgb(199, 199, 222);
+    }
+
+    .knob::-webkit-slider-thumb:active {
+      box-shadow: 0 1px 4px rgba(130, 122, 122, 0.5);
+    }
+
+    .offset-slider {
+      width: 100px;
+      margin-top: 10px;
+    }
+
+    .game-title {
+      font-size: 24px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .values {
+      color: green;
+      font-family: 'Courier New', Courier, monospace;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: black;
+      border: 1px solid green;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 128, 0, 0.5);
+    }
+
+    .modal-text {
+      color: green;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .modal-button {
+      background-color: black;
+      border: 2px solid green;
+      color: green;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .modal-button:hover {
+      background-color: green;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="computer-screen">
+    <div class="gameboard">
+      <canvas id="sineCanvas" width="600" height="600"></canvas>
+      <div class="controls">
+        <div class="knob-wrapper">
+          <input type="range" id="timeInput" class="knob" min="0" max="1000" step="10" value="100">
+          <div style="color: red;"></div>
+          <div style="color: red;" id="redTimeValue">1.00</div>
+        </div>
+        <div class="knob-wrapper">
+          <input type="range" id="amplitudeInput" class="knob" min="1" max="100" step="5" value="50">
+          <div style="color: red;"></div>
+          <div style="color: red;" id="redAmplitudeValue">50</div>
+        </div>
+        <div class="knob-wrapper">
+          <input type="range" id="greenLineTimeInput" class="knob" min="0" max="1000" step="10" value="250" style="background-color: black;">
+          <div style="color: green;"></div>
+          <div style="color: green;" id="greenTimeValue">1.00</div>
+        </div>
+        <div class="knob-wrapper">
+          <input type="range" id="greenLineAmplitudeInput" class="knob" min="1" max="100" step="5" value="25" style="background-color: black;">
+          <div style="color: green;"></div>
+          <div style="color: green;" id="greenAmplitudeValue">25</div>
+        </div>
+        <div class="knob-wrapper">
+          <input type="range" id="greenLineOffsetSlider" class="knob" min="0" max="180" step="1" value="10" style="background-color: black;">
+          <div style="color: blue;"></div>
+          <div style="color: blue;" id="greenOffsetValue">10</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-text">ACCESS GRANTED</div>
+        <button class="modal-button" id="enterButton">ENTER</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('sineCanvas');
+    const ctx = canvas.getContext('2d');
+    const timeInput = document.getElementById('timeInput');
+    const amplitudeInput = document.getElementById('amplitudeInput');
+    const greenLineTimeInput = document.getElementById('greenLineTimeInput');
+    const greenLineAmplitudeInput = document.getElementById('greenLineAmplitudeInput');
+    const greenLineOffsetSlider = document.getElementById('greenLineOffsetSlider');
+    const modal = document.getElementById('modal');
+    const enterButton = document.getElementById('enterButton');
+
+    let frequency = 1;
+    let amplitude = 50;
+    let greenLineFrequency = 1;
+    let greenLineAmplitude = 25;
+    let greenLineOffset = 10;
+
+    function drawSineWave() {
+      canvas.width = 600;
+      canvas.height = 600;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 0.5;
+      for (let y = 0; y <= canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height / 2);
+
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + amplitude * Math.sin(frequency * x / 50);
+        ctx.lineTo(x, y);
+      }
+
+      ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)'; /* Set the red line transparency */
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height / 2);
+
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + greenLineAmplitude * Math.sin(greenLineFrequency * x / 50 + (Math.PI * greenLineOffset) / 180);
+        ctx.lineTo(x, y);
+      }
+
+      ctx.strokeStyle = 'rgba(0, 255, 0, 0.8)'; /* Set the green line transparency */
+      ctx.stroke();
+
+      redTimeValue.textContent = frequency.toFixed(2);
+      redAmplitudeValue.textContent = amplitude;
+      greenTimeValue.textContent = greenLineFrequency.toFixed(2);
+      greenAmplitudeValue.textContent = greenLineAmplitude;
+      greenOffsetValue.textContent = greenLineOffset;
+    }
+
+    function updateSineWave() {
+      frequency = timeInput.value / 50;
+      amplitude = amplitudeInput.value;
+      greenLineFrequency = greenLineTimeInput.value / 50;
+      greenLineAmplitude = greenLineAmplitudeInput.value;
+      greenLineOffset = greenLineOffsetSlider.value;
+
+      drawSineWave();
+    }
+
+    timeInput.addEventListener('input', updateSineWave);
+    amplitudeInput.addEventListener('input', updateSineWave);
+    greenLineTimeInput.addEventListener('input', updateSineWave);
+    greenLineAmplitudeInput.addEventListener('input', updateSineWave);
+    greenLineOffsetSlider.addEventListener('input', updateSineWave);
+
+    function handleKeyPress(event) {
+      const key = event.key.toLowerCase();
+
+      if (key === 'w') {
+        amplitudeInput.value = Math.min(100, parseInt(amplitudeInput.value) + 5);
+      } else if (key === 's') {
+        amplitudeInput.value = Math.max(1, parseInt(amplitudeInput.value) - 5);
+      }
+
+      if (key === 'a') {
+        timeInput.value = Math.max(0, parseInt(timeInput.value) - 10);
+      } else if (key === 'd') {
+        timeInput.value = Math.min(1000, parseInt(timeInput.value) + 10);
+      }
+
+      updateSineWave();
+    }
+
+    document.addEventListener('keypress', handleKeyPress);
+
+    drawSineWave();
+
+    function checkPassword() {
+      const passwordTime = 1.20;           
+      const passwordAmplitude = 16;       
+      const passwordGreenTime = 1.60;      
+      const passwordGreenAmplitude = 71;   
+      const passwordGreenOffset = 150;     
+
+      if (
+        parseFloat(redTimeValue.textContent) === passwordTime &&
+        parseInt(redAmplitudeValue.textContent) === passwordAmplitude &&
+        parseFloat(greenTimeValue.textContent) === passwordGreenTime &&
+        parseInt(greenAmplitudeValue.textContent) === passwordGreenAmplitude &&
+        parseInt(greenOffsetValue.textContent) === passwordGreenOffset
+      ) {
+        modal.style.display = 'block';
+      }
+    }
+
+    enterButton.addEventListener('click', () => {
+      // Replace 'yourURL' with the desired URL
+      window.location.href = 'yourURL';
+    });
+
+    setInterval(checkPassword, 100);
+  </script>
+</body>
+</html>
