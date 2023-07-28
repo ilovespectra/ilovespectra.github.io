@@ -24,13 +24,17 @@
       align-items: center;
       margin: 10px; /* Add margin to create the computer screen border */
       padding: 20px; /* Add padding to separate content from border */
+      position: relative; /* Add position relative to contain CRT effect */
     }
+
+    
 
     .gameboard {
       text-align: center;
-      position: relative;
-      width: 68%;
-      height: 59%;
+      position: absolute; /* Add position absolute to contain CRT effect */
+      width: 100%; /* Set the gameboard width to match the computer screen width */
+      height: 100%; /* Set the gameboard height to match the computer screen height */
+      overflow: hidden; /* Hide overflow to contain CRT effect */
     }
 
     canvas {
@@ -40,11 +44,24 @@
       height: 100%;
     }
 
+    .controls {
+      /* Your control container styles */
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 10px 0;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
     /* Knob styles */
     .knob-wrapper {
       display: inline-block;
       position: relative;
       margin: 10px;
+      font-family: 'Courier New', Courier, monospace;
     }
 
     .knob {
@@ -55,6 +72,7 @@
       background-color: black;
       border-radius: 50%;
       transform-origin: center center;
+      font-family: 'Courier New', Courier, monospace;
       transform: rotate(-45deg);
       box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.3), 0 -2px 2px rgba(255, 255, 255, 0.3);
     }
@@ -93,35 +111,40 @@
       color: green;
       font-family: 'Courier New', Courier, monospace;
       margin-top: 10px;
+      font-weight: bolder;
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
     }
 
     /* Modal styles */
     .modal {
       display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 1;
-    }
-
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: black;
+      background-color: rgb(26, 37, 17);
+      
+      /* position: relative; */
+      overflow: hidden;
+      border-radius: 20px;
+      /* box-shadow: 0 0 10px rgba(0, 128, 0, 0.5); */
+      text-align: center;
+      /* position: relative; */
+
       border: 1px solid green;
       padding: 20px;
       box-shadow: 0 4px 8px rgba(0, 128, 0, 0.5);
+      z-index: 2; /* Make sure the modal is on top of the computer screen */
+    }
+
+    /* Override modal styles for CRT effect */
+    .modal-content {
+      box-shadow: none;
+      border: 2px solid green;
+      width: 70%;
+      height: 70%;
+      transform: translate(-50%, -50%) perspective(1000px) rotateX(1.5deg) scale(1.02);
     }
 
     .modal-text {
@@ -132,9 +155,11 @@
     }
 
     .modal-button {
-      background-color: black;
+      background-color: rgb(26, 37, 17);
       border: 2px solid green;
+      border-radius: 10px;
       color: green;
+      box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
       font-family: 'Courier New', Courier, monospace;
       font-size: 18px;
       padding: 10px 20px;
@@ -143,13 +168,65 @@
 
     .modal-button:hover {
       background-color: green;
+      box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
       color: black;
     }
+
+    /* CRT effect styles */
+    .crt-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+      text-align: center;
+      position: relative;
+      width: 67%;
+      height: 58%;
+    }
+
+    .crt-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+      background-size: 100% 8px;
+      pointer-events: none;
+    }
+
+    .crt-container::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(to right, rgba(0, 128, 0, 0.2) 10px, transparent 10px);
+      background-size: 10px 100%;
+      pointer-events: none;
+    }
+
+    /* Slight bulging effect */
+    .crt-container {
+      transform: perspective(1000px) rotateX(1.5deg) scale(1.02);
+    }
+
+    /* Override modal styles for CRT effect */
+    .modal-content {
+      box-shadow: none;
+      border: 2px solid green;
+      width: 70%;
+      height: 70%;
+      transform: translate(-50%, -50%) perspective(1000px) rotateX(1.5deg) scale(1.02);
+    }
+
   </style>
 </head>
 <body>
   <div class="computer-screen">
-    <div class="gameboard">
+    <div class="crt-container gameboard">
       <canvas id="sineCanvas" width="600" height="600"></canvas>
       <div class="controls">
         <div class="knob-wrapper">
@@ -177,16 +254,16 @@
           <div style="color: blue;"></div>
           <div style="color: blue;" id="greenOffsetValue">10</div>
         </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal" id="modal">
-      <div class="modal-content">
-        <div class="modal-text">ACCESS GRANTED</div>
-        <button class="modal-button" id="enterButton">ENTER</button>
       </div>
     </div>
   </div>
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-text">ACCESS GRANTED</div>
+        <button class="modal-button" id="enterButton">ENTER</button>
+    </div>
+  </div>
+</div>
 
   <script>
     const canvas = document.getElementById('sineCanvas');
@@ -288,12 +365,13 @@
 
     drawSineWave();
 
+    // SET YOUR PASSWORD HERE!
     function checkPassword() {
-      const passwordTime = 1.20;           
-      const passwordAmplitude = 16;       
-      const passwordGreenTime = 1.60;      
-      const passwordGreenAmplitude = 71;   
-      const passwordGreenOffset = 150;     
+      const passwordTime = 1.20;           //*********************
+      const passwordAmplitude = 16;        //
+      const passwordGreenTime = 1.60;      // modify these values
+      const passwordGreenAmplitude = 71;   //
+      const passwordGreenOffset = 150;     //********************* 
 
       if (
         parseFloat(redTimeValue.textContent) === passwordTime &&
