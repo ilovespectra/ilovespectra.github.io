@@ -4,13 +4,41 @@
     <title>Bolton's Memory Monologue</title>
     <style>
         body {
-            background-color: black;
+            background-color: rgb(11, 19, 8);
             color: green;
             font-family: monospace;
             font-size: 18px;
             line-height: 1.5;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
             padding: 20px;
             white-space: pre-wrap;
+            position: relative;
+        }
+
+        /* CRT effect: Green glow */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.imgur.com/jEHcmMF.png'); /* Replace this with your own CRT effect image */
+            mix-blend-mode: color-burn;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        /* CRT effect: Scanlines */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, transparent 95%, rgba(0, 128, 0, 0.2) 98%, rgba(0, 128, 0, 0.4) 100%);
+            pointer-events: none;
         }
     </style>
 </head>
@@ -48,6 +76,9 @@ Bolton: "I can't wait to capture every moment of our vacation with my built-in h
 [Bolton leans back in the chair, cradling Pixel in his arms.]
 
 Bolton: "Thank you, Bunny, for this incredible gift. It's not just a vacation; it's a chance to feel alive, to appreciate the beauty amidst all the neon chaos. I'll cherish every moment, for you, for Pixel, and for all our friends back home."
+
+[The scene fades out as Bolton continues to daydream about the upcoming adventure, his heart brimming with excitement and gratitude.]
+ 
         `;
 
         let currentIndex = 0;
