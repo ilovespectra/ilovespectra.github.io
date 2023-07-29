@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Guard's Quarters Door Code</title>
+    <title>Portal Spawnlink Password Protection</title>
     <style>
         /* Set the background image */
         body {
@@ -10,31 +10,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             font-family: "Courier New", monospace;
-            background-image: url('https://media.discordapp.net/attachments/1051281685234327613/1134142069301063720/image.png?width=686&height=450');
+            background-image: url('https://cdn.discordapp.com/attachments/1051281685234327613/1134543765353283624/image.png');
             background-size: cover;
             background-repeat: no-repeat;
             color: whitesmoke;
             font-size: 24px;
-        }
-
-        #passwordForm {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: "Courier New", monospace;
-        }
-
-        label {
-            margin-bottom: 10px;
+            position: relative;
         }
 
         #keypadContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-gap: 10px;
-            margin-bottom: 10px;
+            font-family: "Courier New", monospace;
         }
 
         .keypadButton {
@@ -43,9 +37,8 @@
             text-align: center;
             border-radius: 6px;
             background-color: #333;
-            color: yellow;
+            color: rgb(198, 198, 153);
             cursor: pointer;
-            font-family: "Courier New", monospace;
             box-shadow: 0px 6px #111;
             font-weight: bolder;
             transition: transform 0.1s;
@@ -82,14 +75,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: black;
-            border: 1px solid green;
+            background-color: rgba(0, 0, 0, 0.502);
+            border: 1px solid red;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 128, 0, 0.5);
+            box-shadow: 0 4px 8px red(0, 128, 0, 0.5);
         }
 
         .modal-text {
-            color: green;
+            color: red;
             font-family: 'Courier New', Courier, monospace;
             font-size: 24px;
             margin-bottom: 20px;
@@ -97,8 +90,8 @@
 
         .modal-button {
             background-color: black;
-            border: 2px solid green;
-            color: green;
+            border: 2px solid red;
+            color: red;
             font-family: 'Courier New', Courier, monospace;
             font-size: 18px;
             padding: 10px 20px;
@@ -106,32 +99,29 @@
         }
 
         .modal-button:hover {
-            background-color: green;
+            background-color: red;
             color: black;
         }
     </style>
 </head>
 <body>
-    <div id="passwordForm">
-        <label for="password"></label>
-        <input type="password" id="password" maxlength="8" required>
-        <br><br>
-        <div id="keypadContainer">
-            <button class="keypadButton" onclick="keypadButtonClicked(1)">1</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(2)">2</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(3)">3</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(4)">4</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(5)">5</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(6)">6</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(7)">7</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(8)">8</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(9)">9</button>
-            <button class="keypadButton" onclick="keypadButtonClicked('*')">*</button>
-            <button class="keypadButton" onclick="keypadButtonClicked(0)">0</button>
-            <button class="keypadButton" onclick="keypadButtonClicked('#')">#</button>
-        </div>
-        <p id="errorMessage"></p>
+    <input type="hidden" id="passwordInput"> <!-- Hidden input to store the entered password -->
+
+    <div id="keypadContainer">
+        <button class="keypadButton" onclick="keypadButtonClicked(1)">1</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(2)">2</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(3)">3</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(4)">4</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(5)">5</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(6)">6</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(7)">7</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(8)">8</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(9)">9</button>
+        <button class="keypadButton" onclick="keypadButtonClicked('*')">*</button>
+        <button class="keypadButton" onclick="keypadButtonClicked(0)">0</button>
+        <button class="keypadButton" onclick="keypadButtonClicked('#')">#</button>
     </div>
+    <p id="errorMessage"></p>
 
     <div class="modal" id="modal">
         <div class="modal-content">
@@ -147,14 +137,14 @@
         let doorOpened = false;
 
         function keypadButtonClicked(value) {
-            const passwordInput = document.getElementById('password');
+            const passwordInput = document.getElementById('passwordInput'); // Use the hidden input
 
             if (doorOpened) {
                 return;
             }
 
             if (value === '#') {
-                handlePoundKey(passwordInput.value);
+                handlePoundKey(passwordInput.value); // Use the value from the hidden input
             } else if (passwordInput.value.length < 8) {
                 passwordInput.value += value;
                 playBeepSound();
@@ -183,7 +173,7 @@
                     disableKeypad();
                 }
 
-                const passwordInput = document.getElementById('password');
+                const passwordInput = document.getElementById('passwordInput'); // Use the hidden input
                 passwordInput.value = '';
             }
         }
