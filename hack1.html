@@ -7,12 +7,113 @@
             margin: 0;
             overflow: hidden;
             background-color: black;
+            position: relative;
         }
+
+        #gameContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Set the game container to fill the entire viewport height */
+        }
+
+        .gameboard-container {
+            /* Center the gameboard horizontally and vertically */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* Set the gameboard width and height based on viewport size */
+            width: 90vw;
+            height: 60vh;
+
+            /* CRT effect styles */
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            text-align: center;
+
+            /* CRT effect: Green glow */
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+                background-size: 100% 8px;
+                pointer-events: none;
+            }
+
+            /* CRT effect: Scanlines */
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(to right, rgba(0, 128, 0, 0.2) 10px, transparent 10px);
+                background-size: 10px 100%;
+                pointer-events: none;
+            }
+
+            /* Slight bulging effect */
+            transform: perspective(1000px) rotateX(1.5deg) scale(1.02);
+        }
+
+        #gameCanvas {
+            display: block;
+            background-color: rgb(21, 25, 19);
+            width: 100%;
+            height: 100%;
+            border: 2px solid green; /* White border around the game board */
+        }
+        /* Override modal styles for CRT effect */
+        .modal-content {
+            box-shadow: none;
+            border: 2px solid green;
+            width: 70%;
+            height: 70%;
+            transform: translate(-50%, -50%) perspective(1000px) rotateX(1.5deg) scale(1.02);
+
+            /* CRT effect: Green glow */
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+                background-size: 100% 8px;
+                pointer-events: none;
+            }
+
+            /* CRT effect: Scanlines */
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(to right, rgba(0, 128, 0, 0.2) 10px, transparent 10px);
+                background-size: 10px 100%;
+                pointer-events: none;
+            }
+
+            /* Slight bulging effect */
+            transform: perspective(1000px) rotateX(1.5deg) scale(1.02);
+        }
+
         #gameCanvas {
             display: block;
             margin: 0 auto;
-            background-color: black;
-            border: 2px solid white; /* White border around the game board */
+            background-color: rgb(21, 25, 19);
+            border: 2px solid green; /* White border around the game board */
         }
         .modal {
             display: none;
@@ -63,10 +164,15 @@
             text-align: center;
             text-transform: uppercase;
         }
+        
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="gameContainer">
+        <div class="gameboard-container crt-container"> <!-- Add the crt-container class to the gameboard container -->
+            <canvas id="gameCanvas" width="800" height="550"></canvas>
+        </div>
+    </div>
 
     <div id="successModal" class="modal">
         <div class="modal-content">
