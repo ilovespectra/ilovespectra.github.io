@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ethichometer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url(https://cdn.discordapp.com/attachments/1051281685234327613/1137052113671823421/tanny_logic_machine_computer_brain_complex_unreal_engine_8k_aa62164e-515f-4c83-a942-a60632f241d9.png);
+            color: green; /* Green text color */
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .conversation-box {
+            position: relative;
+            width: 100vh;
+            padding: 10px;
+            border: 2px solid green; /* Green border */
+            border-radius: 10px;
+            background-color: #090b06;
+            white-space: pre-wrap;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .answer {
+            font-size: 18px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .answer:hover {
+            background-color: #006400; /* Dark green on hover */
+        }
+
+        /* CRT Scanlines */
+        .conversation-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 0, 0.1) 2px, transparent 2px, transparent 4px);
+            z-index: -1;
+        }
+
+        /* Green Glow */
+        .conversation-box::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            border: 2px solid #00FF00;
+            border-radius: 10px;
+            opacity: 0.6;
+            z-index: -2;
+        }
+    </style>
+</head>
+<body>
+    <div class="conversation-box">
+        <div class="question" id="question-text">
+            <!-- The question text will be updated with the typing animation -->
+        </div>
+    </div>
+
+    <script>
+        // The text to be typed
+        const questionText = `Chaotic Neutral!
+        \nYou are unpredictable and often act out of self-interest. Your choices may sometimes lead to negative consequences for both humans and AI. While you are not inherently evil, your moral ambiguity leaves a lot to be desired.`;
+
+        let currentChar = 0;
+        const typingSpeed = 25; // Adjust typing speed (lower value = faster typing)
+
+        function typeQuestion() {
+            if (currentChar < questionText.length) {
+                document.getElementById("question-text").innerHTML += questionText.charAt(currentChar);
+                currentChar++;
+                setTimeout(typeQuestion, typingSpeed);
+            }
+        }
+
+        // Call the typing function when the page loads
+        window.onload = typeQuestion;
+
+        function nextQuestion(answer) {
+            // Perform actions based on the selected answer (answer = 'a', 'b', or 'c')
+            // For now, let's just navigate to the next question
+            if (answer === 'a') {
+                // Code to handle when option 'a' is selected
+                window.location.href = 'question4aaa.html'; // Replace with the next question's file
+            } else if (answer === 'b') {
+                // Code to handle when option 'b' is selected
+                window.location.href = 'question4aab.html'; // Replace with the next question's file
+            } else if (answer === 'c') {
+                // Code to handle when option 'c' is selected
+                window.location.href = 'question4aac.html'; // Replace with the next question's file
+            }
+        }
+    </script>
+</body>
+</html>

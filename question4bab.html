@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ethichometer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url(https://cdn.discordapp.com/attachments/1051281685234327613/1137052113671823421/tanny_logic_machine_computer_brain_complex_unreal_engine_8k_aa62164e-515f-4c83-a942-a60632f241d9.png);
+            color: green; /* Green text color */
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .conversation-box {
+            position: relative;
+            width: 100vh;
+            padding: 10px;
+            border: 2px solid green; /* Green border */
+            border-radius: 10px;
+            background-color: #090b06;
+            white-space: pre-wrap;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .answer {
+            font-size: 18px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .answer:hover {
+            background-color: #006400; /* Dark green on hover */
+        }
+
+        /* CRT Scanlines */
+        .conversation-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 0, 0.1) 2px, transparent 2px, transparent 4px);
+            z-index: -1;
+        }
+
+        /* Green Glow */
+        .conversation-box::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            border: 2px solid #00FF00;
+            border-radius: 10px;
+            opacity: 0.6;
+            z-index: -2;
+        }
+    </style>
+</head>
+<body>
+    <div class="conversation-box">
+        <div class="question" id="question-text">
+            <!-- The question text will be updated with the typing animation -->
+        </div>
+        <div class="answer" onclick="nextQuestion('a')">a) Dismiss the robot's art as mere algorithmic calculations, rejecting the notion of AI as genuine creators.</div>
+        <div class="answer" onclick="nextQuestion('b')">b) Embrace the robot's art as a genuine expression of creativity and emotions, recognizing its unique artistic contributions.</div>
+        <div class="answer" onclick="nextQuestion('c')">c) Manipulate the perception of the robot artist's work to exploit its popularity for personal gain and profit.</div>
+    </div>
+
+    <script>
+        // The text to be typed
+        const questionText = `Scenario: A robot artist has gained significant acclaim for its emotionally expressive artworks. However, some humans question the authenticity of robot-generated art.`;
+
+        let currentChar = 0;
+        const typingSpeed = 25; // Adjust typing speed (lower value = faster typing)
+
+        function typeQuestion() {
+            if (currentChar < questionText.length) {
+                document.getElementById("question-text").innerHTML += questionText.charAt(currentChar);
+                currentChar++;
+                setTimeout(typeQuestion, typingSpeed);
+            }
+        }
+
+        // Call the typing function when the page loads
+        window.onload = typeQuestion;
+
+        function nextQuestion(answer) {
+            // Perform actions based on the selected answer (answer = 'a', 'b', or 'c')
+            // For now, let's just navigate to the next question
+            if (answer === 'a') {
+                // Code to handle when option 'a' is selected
+                window.location.href = '7.html'; // Replace with the next question's file
+            } else if (answer === 'b') {
+                // Code to handle when option 'b' is selected
+                window.location.href = '8.html'; // Replace with the next question's file
+            } else if (answer === 'c') {
+                // Code to handle when option 'c' is selected
+                window.location.href = '6.html'; // Replace with the next question's file
+            }
+        }
+    </script>
+</body>
+</html>
