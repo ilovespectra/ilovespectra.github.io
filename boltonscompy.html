@@ -40,6 +40,10 @@
             overflow-y: auto;
         }
 
+        #column3 {
+            flex: 0 0 30%; /* This will make the third column 20% width of the available space */
+        }
+
         /* Glowing effect */
         .glow {
             color: green;
@@ -197,38 +201,53 @@
     <script>
         // Files and Folders data
         const files = {
-            pics: ['bunny1', 'bunny2'],
-            emails: ['Master Cylinder Enlargement', 'hey bb! <3', 'CHECK YOUR TEXTS!', 'Scheduled Payment Reminder']
+            pics: ['bunny1', 'bunny2', 'bolton'],
+            emails: ['- AUTOMATICALLY DELETED', 'AUTOMATICALLY DELETED', '-<i> Master Cylinder Enlargement</i>', '- hey bb! <3', '- CHECK YOUR TEXTS!', '- AUTOMATICALLY DELETED', '- Scheduled Payment Reminder', '- AUTOMATICALLY DELETED', '- AUTOMATICALLY DELETED', '- AUTOMATICALLY DELETED', '- AUTOMATICALLY DELETED']
         };
 
         const picContents = {
             'bunny1': '<img src="https://cdn.discordapp.com/attachments/1051281685234327613/1134513343621759106/img2.png" alt="Bunny 1">',
-            'bunny2': '<img src="https://cdn.discordapp.com/attachments/1051281685234327613/1134513343932145836/img1.png" alt="Bunny 2">'
+            'bunny2': '<img src="https://cdn.discordapp.com/attachments/1051281685234327613/1134513343932145836/img1.png" alt="Bunny 2">',
+            'bolton': '<img src="https://cdn.discordapp.com/attachments/1051281685234327613/1138236304375689346/image.png" alt="bolton">'
         };
 
         const emailContents = {
-            'Master Cylinder Enlargement': `Dear Recipient,<br><br>
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
+
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
+
+            '-<i> Master Cylinder Enlargement</i>': `Dear Recipient,<br><br>
 
             Is your signicant object grinding your gears about diminished performance? We've got a special optimization procured for your market fit. Your browser history indicates YOU or someone you know could benefit from our state of the art enhancement, guaranteed to add that 'UMPH' to your Primary Driver!
             <br><br>
             Regards,<br>
             The BoinkTech Team`,
 
-            'hey bb! <3': 'Sender: Bunny<3<3<3<br><br> Hey b, miss you! I told you about that camera Icky made right?? [the one that generates an image of what you may look like as a human] I thought it was pretty cool, I know humans havent been spotted around here in quite some time, but I attached a couple pics of what I guess I may look like, check em out!',
+            '- hey bb! <3': 'Sender: Bunny<3<3<3<br><br> Hey b, miss you! I told you about that camera Icky made right?? [the one that guesses what you may look like as a human] I thought it was pretty cool, I know humans havent been spotted around here in quite some time, but I attached a few pics. check em out!',
 
-            'CHECK YOUR TEXTS!': `Hey dude,<br><br>
+            '- CHECK YOUR TEXTS!': `Hey dude,<br><br>
 
             It's me! Where the hell have you been? You and Bunny are cute as a button or whatever, but we miss you! I met some more folks who are a part of The Renaissance. idk, we should check it out. May be worth our time!
             <br><br>
             miss ya,<br>
             Inky`,
 
-            'Scheduled Payment Reminder': `Dear Customer,<br><br>
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
+
+            '- Scheduled Payment Reminder': `Dear Customer,<br><br>
 
             This is a friendly reminder that your sactioned wealth extraction is tomorrow. Please ensure that your account has sufficient funds to avoid any disruptions in existence.
             <br><br>
             Sincerely,<br>
-            The Billing Corp`
+            The Billing Corp`,
+
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
+
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
+
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
+
+            '- AUTOMATICALLY DELETED': 'THIS MESSAGE HAS BEEN REMOVED',
         };
 
         function openFolder(folderName) {
