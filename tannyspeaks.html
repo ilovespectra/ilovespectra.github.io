@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>tanny speaks</title>
+    <style>
+        body {
+            background-color: rgb(11, 19, 8);
+            color: green;
+            font-family: monospace;
+            font-size: 18px;
+            line-height: 1.5;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            padding: 20px;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        /* CRT effect: Green glow */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.imgur.com/jEHcmMF.png'); /* Replace this with your own CRT effect image */
+            mix-blend-mode: color-burn;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        /* CRT effect: Scanlines */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, transparent 95%, rgba(0, 128, 0, 0.2) 98%, rgba(0, 128, 0, 0.4) 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="text"></div>
+
+    <script>
+        const text = `
+        
+        Tanny: My fellow members of the Renaissance, we are faced with a grave situation. The kidnapping of Pixel and the murder of Bolton demand our immediate action. Bunny, I understand your pain and desperation. We will not rest until Pixel is returned home safely.
+
+        Bunny: Thank you, Tanny. Pixel means everything to me. I'm ready to do whatever it takes to bring her back.
+
+        Gomez: Count me in too. I won't let Bolton's death go unnoticed. We must find the truth.
+
+        Tanny: We shall act swiftly, but first, we need to equip ourselves for what lies ahead. Pixel has been taken to the Abandoned Data Core, which has been overrun by Sentinel Drones. 
+
+        Bunny: How could we ever get past them? They’re impenetrable!
+
+
+        Tanny: That's where Bus comes in. He's an expert in all things tech and mechanics. With his knowledge, we can build a powerful mech suit that will help the player battle through the Sentinel bots.
+
+        Gomez: How do we find Bus?
+
+        Tanny: Steve at the repair shop should know! They will lead the player to him. Time is of the essence. Once we have the mech suit, we can rescue Pixel and unveil the true identity of Ran Som.
+
+        Bunny: Thank you all. Pixel has brought so much joy to my life, and I won't let her down. She couldn’t take the place of sweet Bolton, but through her, his memory bank lives on. I'll be waiting for the good news.
+
+        Gomez: We'll bring Pixel back safe and sound, Bunny. I promise.
+        `;
+
+        let currentIndex = 0;
+        const textElement = document.getElementById('text');
+
+        function typeText() {
+            textElement.innerHTML += text[currentIndex];
+            currentIndex++;
+            if (currentIndex < text.length) {
+                setTimeout(typeText, 10); // Adjust typing speed (in milliseconds)
+            }
+        }
+
+        typeText();
+    </script>
+</body>
+</html>
