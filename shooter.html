@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bolton's Memory Machine</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(6, 8, 4);
+            font-family: "Courier New", monospace;
+        }
+        canvas {
+            display: block;
+            margin: 10px auto;
+            width: 70%;
+            height: 70%;
+            border: 2px solid green;
+            box-shadow: 4px greenyellow;
+        }
+        .gameboard-container {
+            /* Center the gameboard horizontally and vertically */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* Set the gameboard width and height based on viewport size */
+            width: 90vw;
+            height: 60vh;
+
+            /* CRT effect styles */
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            text-align: center;
+
+            /* CRT effect: Green glow */
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+                background-size: 100% 8px;
+                pointer-events: none;
+            }
+
+            /* CRT effect: Scanlines */
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(to right, rgba(0, 128, 0, 0.2) 10px, transparent 10px);
+                background-size: 10px 100%;
+                pointer-events: none;
+            }
+
+            /* Slight bulging effect */
+            transform: perspective(1000px) rotateX(1.5deg) scale(1.02);
+        }
+        .title {
+            font-family: Arial, sans-serif;
+            font-size: 50px;
+            font-weight: bold;
+            color: green;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .lives-container {
+            position: absolute;
+            top: 20px;
+            right: 200px;
+            color: green;
+            font-size: 25px;
+            /* font-weight: bold; */
+           
+            display: flex;
+            align-items: center;
+        }
+        .ship-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('https://cdn.discordapp.com/attachments/1051281685234327613/1135656848318537758/ship-removebg-preview.png'); /* Replace with your ship icon URL */
+            background-size: cover;
+            margin-right: 4px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            position: relative;
+            background-color: black;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            font-family: "Courier New", monospace;
+            color: green;
+            font-size: 30px;
+            border: 2px solid green;
+        }
+        .modal-button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: green;
+            color: white;
+            cursor: pointer;
+        }
+        .modal-button:hover {
+            background-color: darkgreen;
+        }
+
+        /* New style for the green player health bar */
+        .player-health-bar {
+            position: absolute;
+            bottom: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 10px;
+            border: 1px solid white;
+            box-shadow: 0 0 10px green;
+        }
+        .player-health-bar-inner {
+            width: 100%;
+            height: 100%;
+            background-color: green;
+            transition: width 0.5s;
+        }
+
+        /* New style for the red enemy health bar */
+        .enemy-health-bar {
+            position: absolute;
+            top: 13px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 20px;
+            margin-bottom: 90px;
+            border: 1px solid white;
+            box-shadow: 0 0 10px red;
+        }
+        .enemy-health-bar-inner {
+            width: 100%;
+            height: 100%;
+            background-color: red;
+            transition: width 0.5s;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="game-board-container">
+    <div class="lives-container" id="livesContainer">
+        <div class="ship-icon"></div>
+        <span id="remainingLives">3</span>
+    </div>
+    <canvas id="gameCanvas" width="650" height="500"></canvas>
+    <div class="enemy-health-bar">
+        <div class="enemy-health-bar-inner" id="enemyHealth"></div>
+    </div>
+    <div class="modal" id="deathModal">
+        <div class="modal-content">
+            <h1>GAME OVER</h1>
+            <button class="modal-button" onclick="restartGame()">Restart</button>
+        </div>
+    </div>
+
+    <div class="player-health-bar">
+        <div class="player-health-bar-inner" id="playerHealth"></div>
+    </div>
+    <div class="modal" id="pauseModal">
+        <div class="modal-content">
+            <h1>PAUSED</h1>
+            <button class="modal-button" onclick="resumeGame()">Resume</button>
+        </div>
+    </div>
+
+    <!-- Add this div for the confirmation modal -->
+<div class="modal" id="continueModal">
+    <div class="modal-content">
+        <h1>YOU DIED</h1>
+        <p>Remaining Lives: <span id="modalRemainingLives">0</span></p>
+        <button class="modal-button" onclick="continueGame()">Continue</button>
+    </div>
+</div>
+</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const playerSize = 35;
+        const playerSpeed = 8;
+        const bulletSpeed = 30;
+        const bulletSize = 5;
+        
+        const enemyRadius = 20;
+        const enemyHealthMax = 1000;
+        const enemySpeed = .3; // Adjust this value to control enemy speed
+        const enemySeekingDistance = 100; // Adjust this value to control enemy seeking distance
+        const enemyFireRate = .1; // Number of bullets fired per minute by the enemy
+        const enemyBulletSpeed = 1.6; // Adjust this value to control enemy bullet speed
+        const enemyBulletSize = 10; // Adjust this value to control enemy bullet size
+        const enemyBulletShadowColor = 'rgba(255, 0, 0, 0.6)'; // Shadow color for enemy bullets
+        const enemyBulletDeflateRate = 0.5; // Rate at which enemy bullets deflate
+        const enemyInitialX = Math.random() * canvas.width; // Store the initial x-coordinate of the enemy
+        const enemyInitialY = Math.random() * canvas.height; // Store the initial y-coordinate of the enemy
+        const patternDuration = 3000; // Set the pattern duration to 1 seconds (1000 milliseconds)
+        let lastPatternChangeTime = performance.now(); // Store the time when the pattern was last changed
+        let isGamePaused = false;
+
+function showDeathModal() {
+    isGamePaused = true;
+    const deathModal = document.getElementById("deathModal");
+    deathModal.style.display = "flex";
+}
+
+function hideDeathModal() {
+    isGamePaused = false;
+    const deathModal = document.getElementById("deathModal");
+    deathModal.style.display = "none";
+}
+
+function showContinueModal() {
+    isGamePaused = true;
+    const continueModal = document.getElementById("continueModal");
+    continueModal.style.display = "flex";
+}
+
+function hideContinueModal() {
+    isGamePaused = false;
+    const continueModal = document.getElementById("continueModal");
+    continueModal.style.display = "none";
+}
+
+function pauseGame() {
+  if (!isGamePaused) {
+    // Pause the game and show the pause modal
+    isGamePaused = true;
+    showPauseModal();
+  }
+}
+
+function showPauseModal() {
+    isGamePaused = true;
+    const pauseModal = document.getElementById("pauseModal");
+    pauseModal.style.display = "flex";
+  }
+
+  function hidePauseModal() {
+    isGamePaused = false;
+    const pauseModal = document.getElementById("pauseModal");
+    pauseModal.style.display = "none";
+  }
+
+  function resumeGame() {
+    hidePauseModal();
+    hideDeathModal();
+    hideContinueModal();
+    isGamePaused = false; // Set isGamePaused to false when resuming the game
+    draw(); // Resume the game loop
+  }
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "p" || event.key === "P") {
+        if (isGamePaused) {
+            // Unpause the game
+            resumeGame();
+        } else {
+            // Pause the game
+            showPauseModal();
+        }
+    }
+});
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - playerSize,
+            angle: -Math.PI / 2,
+            dx: 0,
+            dy: 0,
+            lives: 3,
+            health: 100,
+        };
+
+        let bullets = [];
+
+        let enemy = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            health: enemyHealthMax,
+            destroyed: false,
+            flash: false, // Initialize the flash property
+        };
+
+        let enemyBullets = [];
+        let enemyRotationAngle = 0; // Initialize the enemy's rotation angle
+        let deathModal = document.getElementById('deathModal');
+        let remainingLivesDisplay = document.getElementById('remainingLives');
+        
+
+        const shipImage = new Image();
+shipImage.src = 'https://cdn.discordapp.com/attachments/1051281685234327613/1135659241663905922/ship-removebg-preview.png';
+shipImage.onload = function() {
+  draw();
+};
+
+function drawPlayer() {
+  ctx.save();
+  ctx.translate(player.x, player.y);
+  ctx.rotate(player.angle);
+
+  // Draw the ship image centered at (0, 0)
+  ctx.drawImage(shipImage, -playerSize / 2, -playerSize / 2, playerSize, playerSize);
+
+  ctx.restore();
+}
+
+        function drawBullets() {
+            ctx.fillStyle = 'white';
+            bullets.forEach(bullet => {
+                ctx.beginPath();
+                ctx.arc(bullet.x, bullet.y, bulletSize, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        function drawEnemy() {
+            ctx.beginPath();
+            ctx.arc(enemy.x, enemy.y, enemyRadius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            if (enemy.flash) {
+                ctx.stroke(); // Draw the white border only when the enemy is flashing
+            }
+            ctx.closePath();
+            ctx.fillStyle = enemy.flash ? 'white' : 'black';
+            ctx.fill();
+        }
+
+        function drawHealthBar() {
+    const playerHealthPercentage = player.health / 100; // Calculate the percentage of health (out of 100)
+    const playerHealthBarInner = document.getElementById('playerHealth');
+    playerHealthBarInner.style.width = `${playerHealthPercentage * 100}%`;
+    // Rest of the code remains the same
+}
+
+
+function drawRemainingLives() {
+    remainingLivesDisplay.textContent = player.lives;
+}
+
+function drawEnemyHealthBar() {
+    const enemyHealthPercentage = enemy.health / enemyHealthMax; // Calculate the percentage of enemy health
+    const enemyHealthBarInner = document.getElementById('enemyHealth');
+    enemyHealthBarInner.style.width = `${enemyHealthPercentage * 100}%`;
+}
+
+
+
+        function drawEnemyBullets() {
+            ctx.fillStyle = 'red';
+            enemyBullets.forEach(bullet => {
+                ctx.beginPath();
+                ctx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
+                ctx.fillStyle = enemyBulletShadowColor; // Apply the red shadow effect
+                ctx.shadowColor = 'red';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reset shadow effect for other elements
+                ctx.closePath();
+            });
+        }
+
+        function movePlayer() {
+            if (keys['ArrowUp'] || keys['KeyW']) {
+                player.dy = Math.max(player.dy - 1, -playerSpeed);
+            }
+            if (keys['ArrowDown'] || keys['KeyS']) {
+                player.dy = Math.min(player.dy + 1, playerSpeed);
+            }
+            if (keys['ArrowLeft'] || keys['KeyA']) {
+                player.dx = Math.max(player.dx - 1, -playerSpeed);
+            }
+            if (keys['ArrowRight'] || keys['KeyD']) {
+                player.dx = Math.min(player.dx + 1, playerSpeed);
+            }
+
+            // Apply drift
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Deceleration
+            player.dx *= 0.9;
+            player.dy *= 0.9;
+
+            // Keep the player within the gameboard
+            if (player.x < playerSize) player.x = playerSize;
+            if (player.x > canvas.width - playerSize) player.x = canvas.width - playerSize;
+            if (player.y < playerSize) player.y = playerSize;
+            if (player.y > canvas.height - playerSize) player.y = canvas.height - playerSize;
+        }
+
+        function shootBullet() {
+            const bullet = {
+                x: player.x,
+                y: player.y,
+                dx: Math.cos(player.angle) * bulletSpeed,
+                dy: Math.sin(player.angle) * bulletSpeed,
+            };
+            bullets.push(bullet);
+        }
+
+        function moveEnemy() {
+            if (!enemy.destroyed) {
+                const distanceSq = (player.x - enemy.x) ** 2 + (player.y - enemy.y) ** 2;
+                if (distanceSq < (enemyRadius + playerSize) ** 2) {
+                    enemy.destroyed = true;
+                    player.lives -= 1;
+                    if (player.lives <= 0) {
+                        // Game Over logic here
+                        deathModal.style.display = 'flex';
+                    } else {
+                        // Respawn player and reset enemy health
+                        player.x = canvas.width / 2;
+                        player.y = canvas.height - playerSize;
+                        enemy.health = enemyHealthMax;
+                        enemy.x = enemyInitialX; // Reset the enemy x-coordinate to the initial position
+                        enemy.y = enemyInitialY; // Reset the enemy y-coordinate to the initial position
+                        enemy.destroyed = false;
+                        enemy.firing = false; // Stop enemy firing when respawned
+                        clearInterval(enemyFiringInterval); // Clear the enemy firing interval
+                    }
+                } else {
+            // Calculate the boundaries for the boss enemy's movement
+            const topThirdBoundary = canvas.height / 3;
+            const middleThirdBoundary = (canvas.height * 2) / 3;
+
+            // Continue moving the enemy if there is no collision with the player
+            const angleToPlayer = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+
+            // Limit the boss enemy's movement to the top third and middle two-thirds of the canvas
+            const targetY = Math.max(Math.min(player.y, middleThirdBoundary), topThirdBoundary);
+            const angleToTarget = Math.atan2(targetY - enemy.y, player.x - enemy.x);
+
+            enemy.x += Math.cos(angleToTarget) * enemySpeed;
+            enemy.y += Math.sin(angleToTarget) * enemySpeed;
+
+            // Keep the enemy within the gameboard
+            if (enemy.x < enemyRadius) enemy.x = enemyRadius;
+            if (enemy.x > canvas.width - enemyRadius) enemy.x = canvas.width - enemyRadius;
+            if (enemy.y < enemyRadius) enemy.y = enemyRadius;
+            if (enemy.y > canvas.height - enemyRadius) enemy.y = canvas.height - enemyRadius;
+        }
+
+        // Start enemy firing behavior after setting the initial position
+        if (!enemy.firing) {
+            enemy.firing = true;
+            startEnemyFiring();
+        }
+    }
+}
+
+        function checkBulletCollisions() {
+    bullets.forEach((playerBullet) => {
+        if (!enemy.destroyed) {
+            const distanceSq = (playerBullet.x - enemy.x) ** 2 + (playerBullet.y - enemy.y) ** 2;
+            if (distanceSq < (enemyRadius + bulletSize) ** 2) {
+                playerBullet.x = -100; // Move the player bullet off-screen
+                enemy.health -= 1; // Subtract 1 HP from the enemy
+                enemy.flash = true; // Set the enemy to flash white
+                setTimeout(() => {
+                    enemy.flash = false; // Reset the enemy's flash after a brief time
+                }, 100);
+                if (enemy.health <= 0) {
+                    enemy.destroyed = true;
+                }
+            }
+        }
+    });
+
+    enemyBullets.forEach((bullet) => {
+        bullets.forEach((playerBullet) => {
+            const distanceSq = (playerBullet.x - bullet.x) ** 2 + (playerBullet.y - bullet.y) ** 2;
+            if (distanceSq < (enemyBulletSize + bulletSize) ** 2) {
+                playerBullet.x = -100; // Move the player bullet off-screen
+                bullet.deflating = true;
+            }
+        });
+    });
+}
+
+
+    function checkPlayerCollisions() {
+        if (!enemy.destroyed) {
+            // Check for collisions with enemy bullets
+            enemyBullets.forEach((bullet) => {
+                const distanceSq = (player.x - bullet.x) ** 2 + (player.y - bullet.y) ** 2;
+                if (distanceSq < (playerSize + enemyBulletSize) ** 2) {
+                    bullet.deflating = true;
+                    player.health -= .1; // Reduce player health by 1 (out of 100)
+                    if (player.health <= 0) {
+                        player.lives -= 1; // Deduct one life
+                        player.health = 100; // Reset player health to 100
+                        if (player.lives <= 0) {
+                            // Game Over logic here
+                            deathModal.style.display = "flex";
+                        } else {
+                            // Player lost a life, show the continue modal
+                            const continueModal = document.getElementById("continueModal");
+                            const modalRemainingLivesDisplay = document.getElementById("modalRemainingLives");
+                            modalRemainingLivesDisplay.textContent = player.lives;
+                            continueModal.style.display = "flex";
+                        }
+                    }
+                }
+            });
+
+            // Check for collisions with the enemy itself (contact with the enemy)
+            const distanceSq = (player.x - enemy.x) ** 2 + (player.y - enemy.y) ** 2;
+            if (distanceSq < (playerSize + enemyRadius) ** 2) {
+                player.health -= 10; // Reduce player health by 10 (out of 100) when contacting the enemy
+                if (player.health <= 0) {
+                    player.lives -= 1; // Deduct one life
+                    player.health = 100; // Reset player health to 100
+                    if (player.lives <= 0) {
+                        // Game Over logic here
+                        deathModal.style.display = "flex";
+                    } else {
+                        // Player lost a life, show the continue modal
+                        const continueModal = document.getElementById("continueModal");
+                        const modalRemainingLivesDisplay = document.getElementById("modalRemainingLives");
+                        modalRemainingLivesDisplay.textContent = player.lives;
+                        continueModal.style.display = "flex";
+                    }
+                }
+            }
+        }
+    }
+
+
+
+        function restartGame() {
+            player.lives = 100;
+            enemy.health = enemyHealthMax;
+            enemy.destroyed = false;
+            enemy.x = enemyInitialX; // Reset the enemy x-coordinate to the initial position
+            enemy.y = enemyInitialY; // Reset the enemy y-coordinate to the initial position
+            deathModal.style.display = 'none';
+        }
+
+        function fireEnemyBullet() {
+            const angleToPlayer = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+            const bullet = {
+                x: enemy.x + Math.cos(angleToPlayer) * enemyRadius, // Start outside the white border
+                y: enemy.y + Math.sin(angleToPlayer) * enemyRadius, // Start outside the white border
+                dx: Math.cos(angleToPlayer) * enemyBulletSpeed, // Use the enemyBulletSpeed
+                dy: Math.sin(angleToPlayer) * enemyBulletSpeed, // Use the enemyBulletSpeed
+                deflating: false,
+                size: enemyBulletSize, // Use the enemyBulletSize
+            };
+            enemyBullets.push(bullet);
+        }
+
+        let totalTimeElapsed = 0; // Total time elapsed since the game started
+        let patternIndex = 0; // Index of the current firing pattern
+
+        function firePattern3Bullet() {
+    const bulletCount = .01; // Number of bullets to fire in each rotation
+    const rotationSpeed = (Math.PI * 2) / 15.4; // 60 rotations per minute
+    const rippleInterval = 200; // 0.3 seconds (duration of the ripple effect)
+    const spiralRate = .3; // Adjust this value to control the spiral rate
+
+    if (!enemy.destroyed) {
+        if (totalTimeElapsed % rippleInterval === 0) {
+            for (let i = 0; i < bulletCount; i++) {
+                const angle = enemyRotationAngle + i * spiralRate; // Use the enemyRotationAngle to create the spiral effect
+
+                const bullet = {
+                    x: enemy.x, // Start at the enemy position (not seeking player)
+                    y: enemy.y, // Start at the enemy position (not seeking player)
+                    dx: Math.cos(angle) * enemyBulletSpeed,
+                    dy: Math.sin(angle) * enemyBulletSpeed,
+                    deflating: false,
+                    size: enemyBulletSize,
+                };
+                enemyBullets.push(bullet);
+            }
+        }
+
+        enemyRotationAngle += rotationSpeed; // Update the enemy's rotation angle for the next frame
+
+        // Remove bullets when they reach the canvas boundaries or have deflated
+        enemyBullets = enemyBullets.filter(
+            (bullet) =>
+                bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height && bullet.size > 0
+        );
+    }
+}
+
+
+        function firePattern2Bullet() {
+            const bulletCount = 0; // Number of bullets to fire in each rotation
+            const rotationSpeed = (Math.PI * 2) / 1; // 60 rotations per minute
+            const rapidFireRate = 0; // Number of bullets fired per second during rapid fire
+            const rapidFireDuration = 0; // 3 seconds (duration of rapid fire)
+
+            if (!enemy.destroyed) {
+                for (let i = 0; i < bulletCount; i++) {
+                    const angle = enemyRotationAngle + (i * (Math.PI * 2) / bulletCount);
+
+                    // Rapid fire for 3 seconds during pattern 2
+                    if (totalTimeElapsed <= rapidFireDuration) {
+                        if (totalTimeElapsed % (1000 / rapidFireRate) === 0) {
+                            const bullet = {
+                                x: enemy.x, // Start at the enemy position (not seeking player)
+                                y: enemy.y, // Start at the enemy position (not seeking player)
+                                dx: Math.cos(angle) * enemyBulletSpeed,
+                                dy: Math.sin(angle) * enemyBulletSpeed,
+                                deflating: false,
+                                size: enemyBulletSize,
+                            };
+                            enemyBullets.push(bullet);
+                        }
+                    } else {
+                        // Normal firing behavior after rapid fire in pattern 2
+                        const bullet = {
+                            x: enemy.x, // Start at the enemy position (not seeking player)
+                            y: enemy.y, // Start at the enemy position (not seeking player)
+                            dx: Math.cos(angle) * enemyBulletSpeed,
+                            dy: Math.sin(angle) * enemyBulletSpeed,
+                            deflating: false,
+                            size: enemyBulletSize,
+                        };
+                        enemyBullets.push(bullet);
+                    }
+                }
+
+                // Remove bullets when they reach the canvas boundaries or have deflated
+                enemyBullets = enemyBullets.filter(
+                    (bullet) =>
+                        bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height && bullet.size > 0
+                );
+            }
+        }
+
+        function firePattern4Bullet() {
+            const bulletCount = 0; // Number of bullets to fire in each rotation
+            const rotationSpeed = (Math.PI * 2) / 1; // 60 rotations per minute
+            const rapidFireRate = 0; // Number of bullets fired per second during rapid fire
+            const rapidFireDuration = 0; // 3 seconds (duration of rapid fire)
+
+            if (!enemy.destroyed) {
+                for (let i = 0; i < bulletCount; i++) {
+                    const angle = enemyRotationAngle + (i * (Math.PI * 2) / bulletCount);
+
+                    // Rapid fire for 3 seconds during pattern 2
+                    if (totalTimeElapsed <= rapidFireDuration) {
+                        if (totalTimeElapsed % (1000 / rapidFireRate) === 0) {
+                            const bullet = {
+                                x: enemy.x, // Start at the enemy position (not seeking player)
+                                y: enemy.y, // Start at the enemy position (not seeking player)
+                                dx: Math.cos(angle) * enemyBulletSpeed,
+                                dy: Math.sin(angle) * enemyBulletSpeed,
+                                deflating: false,
+                                size: enemyBulletSize,
+                            };
+                            enemyBullets.push(bullet);
+                        }
+                    } else {
+                        // Normal firing behavior after rapid fire in pattern 2
+                        const bullet = {
+                            x: enemy.x, // Start at the enemy position (not seeking player)
+                            y: enemy.y, // Start at the enemy position (not seeking player)
+                            dx: Math.cos(angle) * enemyBulletSpeed,
+                            dy: Math.sin(angle) * enemyBulletSpeed,
+                            deflating: false,
+                            size: enemyBulletSize,
+                        };
+                        enemyBullets.push(bullet);
+                    }
+                }
+
+                // Remove bullets when they reach the canvas boundaries or have deflated
+                enemyBullets = enemyBullets.filter(
+                    (bullet) =>
+                        bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height && bullet.size > 0
+                );
+            }
+        }
+
+        function firePattern1Bullet() {
+    const bulletCount = .001; // Number of bullets to fire in each rotation
+    const rotationSpeed = (Math.PI * 2) / 9.1; // 60 rotations per minute
+    const rippleInterval = 200; // 0.3 seconds (duration of the ripple effect)
+    const spiralRate = .3; // Adjust this value to control the spiral rate
+
+    if (!enemy.destroyed) {
+        if (totalTimeElapsed % rippleInterval === 0) {
+            for (let i = 0; i < bulletCount; i++) {
+                const angle = enemyRotationAngle + i * spiralRate; // Use the enemyRotationAngle to create the spiral effect
+
+                const bullet = {
+                    x: enemy.x, // Start at the enemy position (not seeking player)
+                    y: enemy.y, // Start at the enemy position (not seeking player)
+                    dx: Math.cos(angle) * enemyBulletSpeed,
+                    dy: Math.sin(angle) * enemyBulletSpeed,
+                    deflating: false,
+                    size: enemyBulletSize,
+                };
+                enemyBullets.push(bullet);
+            }
+        }
+
+        enemyRotationAngle += rotationSpeed; // Update the enemy's rotation angle for the next frame
+
+        // Remove bullets when they reach the canvas boundaries or have deflated
+        enemyBullets = enemyBullets.filter(
+            (bullet) =>
+                bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height && bullet.size > 0
+        );
+    }
+}
+        function drawAndAnimateEnemyBullets() {
+        enemyBullets.forEach((bullet) => {
+            if (!bullet.deflating) {
+                bullet.x += bullet.dx;
+                bullet.y += bullet.dy;
+            } else {
+                bullet.size -= enemyBulletDeflateRate; // Decrease bullet size for deflation effect
+            }
+
+            // Remove bullets when they reach the canvas boundaries or have deflated
+            if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height || bullet.size <= 0) {
+                enemyBullets.splice(enemyBullets.indexOf(bullet), 1);
+            }
+
+            if (!bullet.deflating) {
+                // Check for bullet collisions with the player
+                const distanceSq = (player.x - bullet.x) ** 2 + (player.y - bullet.y) ** 2;
+                if (distanceSq < (playerSize + bullet.size) ** 2) {
+                    bullet.deflating = true;
+                }
+            }
+        });
+    }
+
+    // const patternDuration = 3000; // Set the pattern duration to 3 seconds (3000 milliseconds)
+        const pattern1Delay = 50000; // Set the delay for pattern 1 to 5 seconds (5000 milliseconds)
+        const pattern2Duration = 100000; // Set the duration for pattern 2 to 10 seconds (10000 milliseconds)
+        let elapsedPattern1Time = 0; // Track the elapsed time for pattern 1
+        let elapsedPattern2Time = 0;
+        let elapsedPattern3Time = 0; // Track the elapsed time for pattern 3
+        const patternPauseDuration = 5000;
+
+        function updateEnemyBullets(currentTime) {
+    if (!enemy.destroyed) {
+        const elapsedPatternTime = currentTime - lastPatternChangeTime;
+
+        // Check if pattern 1 should start or if pattern 3 is complete
+        if (elapsedPatternTime > pattern1Delay && patternIndex === -1) {
+            patternIndex = 0;
+            lastPatternChangeTime = currentTime;
+        } else if (elapsedPatternTime > patternDuration + patternPauseDuration && patternIndex === 2) {
+            patternIndex = 0;
+            lastPatternChangeTime = currentTime;
+        }
+
+        // Check if it's time to switch to the next firing pattern
+        if (elapsedPatternTime > patternDuration + patternPauseDuration) {
+            if (patternIndex === 0) {
+                // Pattern 1 is done, switch to pattern 2
+                patternIndex = 1;
+            } else {
+                // Pattern 2 is done, switch to pattern 3
+                patternIndex = 2;
+            }
+            lastPatternChangeTime = currentTime;
+        }
+
+        // Fire bullets based on the current pattern
+        if (patternIndex === 0) {
+            firePattern1Bullet(); // Fire pattern1 bullets
+        } else if (patternIndex === 1) {
+            firePattern2Bullet(); // Fire pattern2 bullets
+        } else {
+            firePattern3Bullet(); // Fire pattern3 bullets
+        }
+    }
+
+    requestAnimationFrame(() => updateEnemyBullets(performance.now())); // Call the function recursively with requestAnimationFrame
+}
+
+
+    // Start the recursive updateEnemyBullets function when the game begins
+    updateEnemyBullets(performance.now());
+    let enemyFiringInterval; // Variable to store the enemy firing interval ID
+
+    function startEnemyFiring() {
+        enemyFiringInterval = setInterval(() => {
+            if (!enemy.destroyed) {
+                fireEnemyBullet();
+            }
+        }, 100000 / enemyFireRate);
+    }
+
+    function continueGame() {
+  player.health = 100; // Refill player health to 100
+  const continueModal = document.getElementById('continueModal');
+  continueModal.style.display = 'none'; // Hide the modal
+  drawRemainingLives(); // Update the remaining lives counter after continuing
+}
+
+
+
+    let keys = {};
+    document.addEventListener('keydown', (e) => {
+        keys[e.code] = true;
+    });
+
+    document.addEventListener('keyup', (e) => {
+        keys[e.code] = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        // Your existing mousemove event handling code remains unchanged
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const angleToMouse = Math.atan2(mouseY - player.y, mouseX - player.x);
+        player.angle = angleToMouse;
+    });
+
+    let firing = false;
+    canvas.addEventListener('mousedown', () => {
+        firing = true;
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        firing = false;
+    });
+
+    function draw() {
+    if (!isGamePaused) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPlayer();
+        drawBullets();
+
+        if (!enemy.destroyed) {
+            drawEnemy();
+            drawHealthBar();
+            moveEnemy();
+        }
+
+        drawEnemyBullets();
+        drawRemainingLives();
+        drawEnemyHealthBar();
+
+        if (firing) {
+            shootBullet();
+        }
+
+        movePlayer();
+        bullets.forEach((bullet) => {
+            bullet.x += bullet.dx;
+            bullet.y += bullet.dy;
+            // Remove bullets when they reach the canvas boundaries
+            if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                bullets.splice(bullets.indexOf(bullet), 1);
+            }
+        });
+
+        checkBulletCollisions();
+        checkPlayerCollisions();
+        drawAndAnimateEnemyBullets();
+
+        
+
+        setTimeout(function () {
+            requestAnimationFrame(draw);
+        }, 1000 / 60);
+        
+    }
+}
+
+        updateEnemyBullets();
+        
+        draw();
+    </script>
+</body>
+</html>
