@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psymin Iterates</title>
+  <style>
+    /* Enhance the appearance of buttons and game board */
+    body {
+    background: black url('screenred.png') repeat;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .simon-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative; /* Add relative positioning to the board */
+    perspective: 5000px; /* Set the perspective to simulate depth */
+    transform: rotateX(90deg);
+    transform: rotateY(10deg); /* Adjust the value for the convex effect */
+  }
+
+    .button {
+      width: 150px;
+      height: 90px;
+      border-radius: 20%;
+      margin: 30px;
+      cursor: pointer;
+      box-shadow: 0px 0px 10px rgba(50, 49, 49, 0.3);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      background-color: rgba(0, 0, 0, 0.3); /* Dim default color */
+    }
+
+    #button-1 {
+      background-color: rgba(143, 8, 8, 0.6);
+      margin-bottom: 70px;
+    }
+
+    #button-2 {
+      background-color: rgba(141, 141, 0, 0.6);
+      margin-bottom: 70px;
+    }
+
+    #button-3 {
+      background-color: rgba(0, 54, 0, 0.6);
+      margin-bottom: 70px;
+    }
+
+    #button-4 {
+      background-color: rgba(0, 0, 95, 0.6);
+      margin-bottom: 70px;
+    }
+
+    .button-container {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr;
+      grid-template-rows: 80px 1fr 80px;
+      justify-items: center;
+      align-items: center;
+      grid-gap: 5px;
+    }
+
+    /* Hover effect */
+    .button:hover {
+      background-color: white;
+    }
+
+    /* Press effect */
+    .button:active {
+      transform: scale(0.9);
+      box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Add a 'lit' class to add the glow effect */
+    .button.lit {
+      box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Button 1 Press effect */
+    #button-1:active {
+      background-color: rgba(231, 2, 159, 0.853);
+      box-shadow: 0px 0px 30px rgba(231, 2, 159, 0.853);
+    }
+
+    /* Button 1 Add a 'lit' class to add the glow effect */
+    #button-1.lit {
+      background-color: rgba(231, 2, 159, 0.811);
+      box-shadow: 0px 0px 30px rgba(231, 2, 159, 0.8);
+    }
+
+    /* Button 2 Press effect */
+    #button-2:active {
+      background-color: rgba(168, 238, 4, 0.843);
+      box-shadow: 0px 0px 30px rgba(168, 238, 4, 0.8);
+    }
+
+    /* Button 2 Add a 'lit' class to add the glow effect */
+    #button-2.lit {
+      background-color: rgba(168, 238, 4, 0.857);
+      box-shadow: 0px 0px 30px rgba(168, 238, 4, 0.8);
+    }
+
+    /* Button 3 Press effect */
+    #button-3:active {
+      background-color: rgba(0, 243, 182, 0.832);
+      box-shadow: 0px 0px 30px rgba(0, 243, 182, 0.8);
+    }
+
+    /* Button 3 Add a 'lit' class to add the glow effect */
+    #button-3.lit {
+      background-color: rgba(0, 242, 182, 0.81);
+      box-shadow: 0px 0px 30px rgba(0, 242, 182, 0.8);
+    }
+
+    /* Button 4 Press effect */
+    #button-4:active {
+      background-color: rgba(213, 50, 1, 0.803);
+      box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.8);
+    }
+
+    /* Button 4 Add a 'lit' class to add the glow effect */
+    #button-4.lit {
+      background-color: rgba(0, 0, 255, 0.825);
+      box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.8);
+    }
+
+    .score-box {
+      position: absolute;
+      bottom: 10px;
+      width: 160px;
+      height: 60px;
+      border-radius: 40px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      font-weight: bold;
+      text-shadow: rgb(2, 243, 2);
+      box-shadow: 0 0 10px green;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+    <div class="simon-board">
+    <div class="button-container">
+      <div></div>
+      <button id="button-1" class="button" onmousedown="playSound('https://cdn.glitch.global/2e423b6b-bd48-4c82-b6bc-e766d7cc586b/red2.wav?v=1691255338013')"></button>
+      <div></div>
+      <button id="button-2" class="button" onmousedown="playSound('https://cdn.glitch.global/2e423b6b-bd48-4c82-b6bc-e766d7cc586b/yellow2.wav?v=1691255339451')"></button>
+      <div></div>
+      <button id="button-3" class="button" onmousedown="playSound('https://cdn.glitch.global/2e423b6b-bd48-4c82-b6bc-e766d7cc586b/green2.wav?v=1691255342473')"></button>
+      <div></div>
+      <button id="button-4" class="button" onmousedown="playSound('https://cdn.glitch.global/2e423b6b-bd48-4c82-b6bc-e766d7cc586b/blue2.wav?v=1691255345257')"></button>
+      <div></div>
+    </div>
+    <div id="score-display" class="score-box">Score: 0</div>
+  </div>
+  
+
+  <script>
+    // Global variables
+    let sequence = []; // To store the random sequence
+    let userSequence = []; // To store the user's input
+    let score = 0; // Initialize score
+    let gameStarted = false; // To check if the game has started
+    let psyminTurn = true; // To indicate whether it's Psymin's turn
+
+    // Function to generate a random number between 0 and 3
+    function getRandomNumber() {
+      return Math.floor(Math.random() * 4);
+    }
+
+    // Function to add a new light to the sequence and play the pattern
+    function addToSequence() {
+      const randomNumber = getRandomNumber();
+      sequence.push(randomNumber);
+      playSequence();
+    }
+
+    // Function to play the sequence for the user to follow
+    function playSequence() {
+      gameStarted = false; // Disable user input during Psymin's turn
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i === sequence.length) {
+          clearInterval(interval);
+          userSequence = []; // Clear user's input for the next round
+          gameStarted = true; // Enable user input after the pattern is shown
+        } else {
+          lightButton(sequence[i]);
+          i++;
+        }
+      }, 550); // Change the interval as you like
+    }
+
+    // Function to light up a button by adding a CSS class
+    function lightButton(buttonIndex) {
+      const buttons = document.getElementsByClassName("button");
+      buttons[buttonIndex].classList.add("lit");
+      setTimeout(() => {
+        buttons[buttonIndex].classList.remove("lit");
+      }, 300); // Change the duration as you like
+    }
+
+    // Function to handle user's button click
+    function handleButtonClick(event) {
+      // If it's not the user's turn, ignore the click
+      if (!gameStarted) {
+        return;
+      }
+
+      const buttonIndex = Array.from(document.getElementsByClassName("button")).indexOf(event.target);
+      userSequence.push(buttonIndex);
+      
+      // Check if the user's input matches the sequence
+      for (let i = 0; i < userSequence.length; i++) {
+        if (userSequence[i] !== sequence[i]) {
+          endGame();
+          return;
+        }
+      }
+
+      // If the user's input matches the sequence length, add a new light and update the score
+      if (userSequence.length === sequence.length) {
+        score += 1000;
+        document.getElementById("score-display").innerText = "Score: " + score;
+        addToSequence();
+      }
+    }
+
+    // Function to end the game and display the modal
+    function endGame() {
+      alert(`Psymin Didn't Say!\nYour Score: ${score}`);
+      // Reset the game
+      sequence = [];
+      userSequence = [];
+      score = 0;
+      gameStarted = false;
+      psyminTurn = true;
+      document.getElementById("score-display").innerText = "Score: " + score;
+    }
+
+    // Event listener for button clicks
+    document.getElementById("score-display").innerText = "Score: " + score;
+    document.querySelectorAll(".button").forEach(button => {
+      button.addEventListener("click", handleButtonClick);
+    });
+
+    function playSound(soundURL) {
+      const audio = new Audio(soundURL);
+      audio.play();
+    }
+
+    // Start the game by having Psymin illuminate a button
+    function startGame() {
+      if (!gameStarted && psyminTurn) {
+        psyminTurn = false;
+        addToSequence();
+      }
+    }
+
+    // Wait for a delay before starting the game
+    setTimeout(startGame, 1000);
+  </script>
+</body>
+</html>
