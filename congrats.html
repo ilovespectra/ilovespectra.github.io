@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Congrats!</title>
+    <style>
+        body {
+            background-color: rgb(11, 19, 8);
+            color: green;
+            font-family: monospace;
+            font-size: 18px;
+            line-height: 1.5;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            padding: 20px;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        /* CRT effect: Green glow */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+/*             background-image: url('https://i.imgur.com/jEHcmMF.png'); /* Replace this with your own CRT effect image */ */
+            mix-blend-mode: color-burn;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        /* CRT effect: Scanlines */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, transparent 95%, rgba(0, 128, 0, 0.2) 98%, rgba(0, 128, 0, 0.4) 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="text"></div>
+
+    <script>
+        const text = `
+        
+        Congratulations! You found a clue and solved the sine wave puzzle. These demo version of Bolton's room is a demonstration of the types of minigames I'm building for Resonance. Hopefully the clues won't be so easy though ;]
+        `;
+
+        let currentIndex = 0;
+        const textElement = document.getElementById('text');
+
+        function typeText() {
+            textElement.innerHTML += text[currentIndex];
+            currentIndex++;
+            if (currentIndex < text.length) {
+                setTimeout(typeText, 10); // Adjust typing speed (in milliseconds)
+            }
+        }
+
+        typeText();
+    </script>
+</body>
+</html>
