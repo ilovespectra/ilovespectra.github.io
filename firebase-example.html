@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Wall Example</title>
+    <style>
+       /* body {
+    margin: 0;
+    padding: 0;
+    font-family: "Courier New", monospace;
+    background-color: #001a00;
+    color: #00ff00;
+    text-shadow: 1px 1px 1px #00ff00;
+} */
+
+h1 {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 24px;
+}
+
+#comments {
+    margin: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: rgb(2, 202, 2);
+    /* border: 2px solid #04ab04;
+    box-shadow: 0px 0px 10px #04bc04e3; */
+    overflow-y: auto;
+}
+
+#commentInput,
+#usernameInput {
+    width: 80%;
+    padding: 10px;
+    margin: 20px 0;
+    border: 2px solid #06c406;
+    background-color: #001a00;
+    color: #04be04d8;
+    resize: vertical;
+    font-size: 14px;
+    
+}
+
+#commentInput::placeholder,
+#usernameInput::placeholder {
+    color: #06d606;
+}
+
+#submitButton {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #01d201e7;
+    color: #001a00;
+    border: 2px solid #004d00; /* Dark green stroke */
+    border-radius: 20px; /* Rounded corners */
+    cursor: pointer;
+}
+
+#submitButton:hover {
+    background-color: #004d00;
+    color: #04de04;
+}
+/* Set the background */
+body {
+            margin: 0;
+            padding: 0;
+            font-family: "Courier New", monospace;
+            background-color: black;
+            color: green;
+            font-size: 24px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Finder bar */
+        .finder-bar {
+            display: flex;
+            align-items: center;
+            background-color: black;
+            color: green;
+            padding: 10px;
+            font-size: 20px;
+            border-bottom: 2px solid green;
+        }
+
+        /* File Explorer columns */
+        .columns {
+            display: flex;
+            flex-wrap: nowrap;
+            height: calc(100vh - 40px);
+        }
+
+        .column {
+            flex: 1;
+            padding: 20px;
+            border-right: 2px solid green;
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        #column3 {
+            flex: 0 0 30%; /* This will make the third column 20% width of the available space */
+        }
+
+        /* Glowing effect */
+        .glow {
+            color: green;
+            text-shadow: 0 0 10px green;
+        }
+
+        /* Highlight effect */
+        .folder, .file, .image {
+            transition: background-color 0.2s ease;
+        }
+
+        .folder:hover, .file:hover, .image:hover {
+            background-color: rgba(0, 128, 0, 0.2);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            border: 1px solid green;
+            box-shadow: 0 4px 8px rgba(0, 128, 0, 0.5);
+            width: 60%;
+            height: 60%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            max-height: 100%;
+        }
+        .comments-container {
+    margin: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: rgb(2, 202, 2);
+    border: 2px solid #04ab04;
+    box-shadow: 0px 0px 10px #04bc04e3;
+    overflow-y: auto;
+    /* Set a fixed height or max-height for the comments container */
+    max-height: 300px; /* Adjust the value as needed */
+}
+        /* CRT effect styles */
+        .crt-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            height: 100vh;
+        }
+
+        .crt-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+            background-size: 100% 8px;
+            pointer-events: none;
+        }
+
+        .crt-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, rgba(0, 128, 0, 0.2) 10px, transparent 10px);
+            background-size: 10px 100%;
+            pointer-events: none;
+        }
+
+        /* Slight bulging effect */
+        .crt-container {
+            transform: perspective(1000px) rotateX(1.5deg) scale(1.02);
+        }
+
+        /* Override modal styles for CRT effect */
+        .modal-content {
+            box-shadow: none;
+            border: 2px solid green;
+            width: 70%;
+            height: 70%;
+            transform: translate(-50%, -50%) perspective(1000px) rotateX(1.5deg) scale(1.02);
+        }
+
+        /* Folder icon */
+        .folder-icon::before {
+            content: ">";
+            margin-right: 5px;
+        }
+
+        /* Image centering */
+        .modal-image img {
+            width: 250px;
+            height: 250px;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+
+        /* Close button */
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: green;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="crt-container">
+        <h1>Social Wall Example</h1>
+        <center>
+            <input type="text" id="usernameInput" placeholder="Username" required>
+            <textarea id="commentInput" placeholder="Leave a comment"></textarea>
+            <button id="submitButton">Submit</button>
+        </center>
+        <div class="comments-container">
+            <div id="comments">
+                <!-- Comments will be displayed here -->
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <p class="modal-message" id="modalMessage"></p>
+            <button class="modal-close" id="modalClose">Close</button>
+        </div>
+    </div>
+    
+    <script>
+ 
+         const firebaseConfig = {
+          apiKey: "YOUR_KEY_HERE",
+          authDomain: "YOUR_DOMAIN_HERE",
+          projectId: "YOUR_PROJECT_ID_HERE",
+          storageBucket: "YOUR_STOAGE_BUCKET_HERE",
+          messagingSenderId: "YOUR_SENDER_ID",
+          appId: "YOUR_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        
+
+        // Get a reference to the Firestore database
+        const db = firebase.firestore();
+
+        // Reference to the comments collection
+        const commentsRef = db.collection('comments');
+        
+
+        function displayComments() {
+    const commentsContainer = document.getElementById('comments');
+    commentsRef.orderBy('timestamp', 'desc').get().then((querySnapshot) => {
+        commentsContainer.innerHTML = '';
+        querySnapshot.forEach((doc) => {
+            const commentData = doc.data();
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment';
+
+            const usernameParagraph = document.createElement('p');
+            usernameParagraph.textContent = 'User: ' + commentData.username;
+
+            const timestampParagraph = document.createElement('p');
+            const timestamp = commentData.timestamp.toDate();
+            const formattedTimestamp = formatDate(timestamp);
+            timestampParagraph.textContent = '' + formattedTimestamp;
+
+            const commentTextParagraph = document.createElement('p');
+            commentTextParagraph.textContent = '' + commentData.comment;
+
+            commentElement.appendChild(usernameParagraph);
+            commentElement.appendChild(timestampParagraph);
+            commentElement.appendChild(commentTextParagraph);
+
+            commentsContainer.appendChild(commentElement);
+
+            // Add a line break after each comment
+            const lineBreak = document.createElement('br');
+            commentsContainer.appendChild(lineBreak);
+        });
+    });
+}
+
+
+        function formatDate(date) {
+            const options = { hour: 'numeric', minute: 'numeric', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit' };
+            return date.toLocaleString('en-US', options);
+        }
+
+        const submitButton = document.getElementById('submitButton');
+        submitButton.addEventListener('click', () => {
+            const offensiveWords = ["shit", "fuk", "sex", "porn", "naked", "nude", "dong", "piss", "fuck", "cunt", "cock", "tits", "twat", "damn", "ass", "fart", "balls", "dick", "pussy", "fag", "faggot", "bitch", "skank", "fucker", "motherfucker", "goddammit", "dammit", "damnit"];
+    const usernameInput = document.getElementById('usernameInput');
+    const commentInput = document.getElementById('commentInput');
+    const username = usernameInput.value.trim();
+    const commentText = commentInput.value.trim().toLowerCase(); // Convert to lowercase for case-insensitive check
+
+    // Check for offensive words
+    const isOffensive = offensiveWords.some(word => commentText.includes(word));
+
+    if (username !== '' && commentText !== '' && !isOffensive) {
+        commentsRef.add({
+            username: username,
+            comment: commentInput.value, // Use the original input value, not lowercase
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            usernameInput.value = '';
+            commentInput.value = '';
+            displayComments();
+        }).catch((error) => {
+            console.error('Error adding comment:', error);
+        });
+    } else if (isOffensive) {
+        alert('The comment contains offensive language. Please modify your comment.');
+    }
+});
+
+    displayComments();
+    </script>
+</body>
+</html>
