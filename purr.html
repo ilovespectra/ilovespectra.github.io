@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>purrrrrrrrrrrr</title>
+    <style>
+        body {
+            background-color: rgb(11, 19, 8);
+            color: green;
+            font-family: monospace;
+            font-size: 18px;
+            line-height: 1.5;
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            padding: 20px;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        /* CRT effect: Green glow */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(9, 16, 4); /* Replace this with your own CRT effect image */
+            mix-blend-mode: color-burn;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        /* CRT effect: Scanlines */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, transparent 95%, rgba(0, 128, 0, 0.2) 98%, rgba(0, 128, 0, 0.4) 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="text"></div>
+    <script>
+        const text = `
+        
+        :low-frequency, continuous rumble:
+
+        Pixel purs with contentment...
+        `;
+
+        let currentIndex = 0;
+        const textElement = document.getElementById('text');
+
+        function typeText() {
+            textElement.innerHTML += text[currentIndex];
+            currentIndex++;
+            if (currentIndex < text.length) {
+                setTimeout(typeText, 10); // Adjust typing speed (in milliseconds)
+            }
+        }
+
+        typeText();
+
+        async function updateVisitorCount() {
+            try {
+                const response = await fetch('visitor-counter.php');
+                const data = await response.json();
+                const visitorCountSpan = document.getElementById('visitorCount');
+                visitorCountSpan.textContent = data.visitorCount;
+            } catch (error) {
+                console.error('Error updating visitor count:', error);
+            }
+        }
+
+        updateVisitorCount();
+    </script>
+</body>
+</html>
