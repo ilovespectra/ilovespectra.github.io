@@ -14,6 +14,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: none;
             height: 100vh; /* Set the game container to fill the entire viewport height */
         }
 
@@ -109,6 +110,11 @@
             transform: perspective(1000px) rotateX(1.5deg) scale(1.02);
         }
 
+        .next-level-link {
+            color: green;
+            text-decoration: underline;
+        }
+
         #gameCanvas {
             display: block;
             margin: 0 auto;
@@ -137,11 +143,6 @@
             color: green;
             background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.2) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0.2)), linear-gradient(45deg, rgba(0, 0, 0, 0.2) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0.2)); /* Diagonally striped background */
             background-size: 4px 4px;
-        }
-
-        .next-level-link {
-            color: green;
-            text-decoration: underline;
         }
         .message-box {
             position: absolute;
@@ -182,7 +183,7 @@
     <div id="successModal" class="modal">
         <div class="modal-content">
             <div class="message-box">
-                <h1>Hacking Successful</h1>
+                <h1>Hacking Complete!</h1>
                 <a class="next-level-link" href="https://ilovespectra.github.io/boltonscompy.html">Enter Bolton's Databank Pro</a>
             </div>
         </div>
@@ -192,7 +193,7 @@
     <div id="failedModal" class="modal" onclick="attemptFailed()">
         <div class="modal-content">
             <div class="message-box">
-                <h1>Hack Failed!</h1> 
+                <h1>Failed!</h1> 
                 <p>Remaining attempts: <span id="remainingAttempts">3</span></p> 
                 <p>Click anywhere to retry</p>
             </div>
@@ -238,11 +239,6 @@
             if (attempts > 0) {
                 document.getElementById('failedModal').style.display = 'none';
                 resetBallAndPaddle(); // Reset ball and paddle positions
-                for (let c = 0; c < blockColumnCount; c++) {
-                    for (let r = 0; r < blockRowCount; r++) {
-                        blocks[c][r].status = 1; // Reset all blocks to present/green
-                    }
-                }
                 draw(); // Start the game loop
             }
 
@@ -251,6 +247,7 @@
                 document.getElementById('lockedModal').style.display = 'flex';
             }
         }
+
 
 
         function drawBall() {
@@ -379,8 +376,8 @@
             paddleX = (canvas.width - paddleWidth) / 2;
             ballX = canvas.width / 2;
             ballY = canvas.height - 30;
-            ballSpeedX = 14; // Faster initial speed
-            ballSpeedY = -14; // Faster initial speed
+            ballSpeedX = 12; // Faster initial speed
+            ballSpeedY = -12; // Faster initial speed
         }
 
 
@@ -402,9 +399,9 @@
         }
 
 
-
-        canvas.addEventListener("mousemove", (e) => {
-            const relativeX = e.clientX - canvas.offsetLeft;
+        document.addEventListener("mousemove", (e) => {
+            const mouseX = e.clientX; // Get mouse X position
+            const relativeX = mouseX - canvas.getBoundingClientRect().left; // Adjust for canvas position
             paddleX = Math.min(Math.max(relativeX - paddleWidth / 2, 0), canvas.width - paddleWidth);
         });
 
