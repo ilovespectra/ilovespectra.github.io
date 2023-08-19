@@ -218,6 +218,8 @@
         const blockHeight = 30;
         const blockRowCount = 4;
         const blockColumnCount = 5;
+        const FPS = 60; // Target frames per second
+        const FRAME_INTERVAL = 1000 / FPS; // Duration of each frame in milliseconds
 
         let paddleX = (canvas.width - paddleWidth) / 2;
         let ballX = canvas.width / 2;
