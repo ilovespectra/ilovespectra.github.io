@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('https://cdn.discordapp.com/attachments/1051281685234327613/1145358114514812928/image.png') no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .piano {
+    display: flex;
+    user-select: none;
+    perspective: 2000px; /* Adjust the perspective depth as needed */
+  }
+
+  .key {
+    height: 150px;
+    width: 30px;
+    border: 1px solid #000;
+    background-color: #fff;
+    position: relative;
+    margin-right: -1px; /* Remove the gap between keys */
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    transform-style: preserve-3d; /* Preserve 3D transformation for children */
+  }
+
+  .key.black {
+    height: 92px;
+    width: 20px;
+    background-color: #000;
+    z-index: 1;
+    margin-right: -22px;
+    transform: translate(-10px, -2px);
+    transform-style: preserve-3d; /* Preserve 3D transformation for children */
+  }
+
+  .key.white.active {
+    background-color: #ccc;
+    transform: translateY(2px);
+  }
+
+  .key.black.active {
+    background-color: #666;
+    transform: translate(-10px, 0px);
+  }
+  .popup-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .popup-content {
+    color: #ccc;
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+  }
+</style>
+<title>Piano Keyboard</title>
+</head>
+<body>
+<div class="piano" id="piano">
+
+  <div class="key white" data-note="A"></div>
+  <div class="key black" data-note="A#"></div>
+  <div class="key white" data-note="B"></div>
+  <!-- First octave -->
+  <div class="key white" data-note="C"></div>
+  <div class="key black" data-note="C#"></div>
+  <div class="key white" data-note="D"></div>
+  <div class="key black" data-note="D#"></div>
+  <div class="key white" data-note="E"></div>
+  <div class="key white" data-note="F"></div>
+  <div class="key black" data-note="F#"></div>
+  <div class="key white" data-note="G"></div>
+  <div class="key black" data-note="G#"></div>
+  <div class="key white" data-note="A"></div>
+  <div class="key black" data-note="A#"></div>
+  <div class="key white" data-note="B"></div>
+  
+  <!-- Second octave -->
+  <div class="key white" data-note="C"></div>
+  <div class="key black" data-note="C#"></div>
+  <div class="key white" data-note="D"></div>
+  <div class="key black" data-note="D#"></div>
+  <div class="key white" data-note="E"></div>
+  <div class="key white" data-note="F"></div>
+  <div class="key black" data-note="F#"></div>
+  <div class="key white" data-note="G"></div>
+  <div class="key black" data-note="G#"></div>
+  <div class="key white" data-note="A"></div>
+  <div class="key black" data-note="A#"></div>
+  <div class="key white" data-note="B"></div>
+  <!-- Third octave -->
+  <div class="key white" data-note="C2"></div>
+  <div class="key black" data-note="C#"></div>
+  <div class="key white" data-note="D"></div>
+  <div class="key black" data-note="D#"></div>
+  <div class="key white" data-note="E"></div>
+  <div class="key white" data-note="F"></div>
+  <div class="key black" data-note="F#"></div>
+  <div class="key white" data-note="G"></div>
+  <div class="key black" data-note="G#"></div>
+  <div class="key white" data-note="A"></div>
+  <div class="key black" data-note="A#"></div>
+  <div class="key white" data-note="B"></div>
+
+  <!-- Fourth octave -->
+  <div class="key white" data-note="C"></div>
+  <div class="key black" data-note="C#"></div>
+  <div class="key white" data-note="D"></div>
+  <div class="key black" data-note="D#"></div>
+  <div class="key white" data-note="E"></div>
+  <div class="key white" data-note="F"></div>
+  <div class="key black" data-note="F#"></div>
+  <div class="key white" data-note="G"></div>
+  <div class="key black" data-note="G#"></div>
+  <div class="key white" data-note="A"></div>
+  <div class="key black" data-note="A#"></div>
+  <div class="key white" data-note="B"></div>
+  
+</div>
+
+<audio id="noteC" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/c.wav?v=1693146040954"></audio>
+<audio id="noteC#" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/c%23.wav?v=1693146043348"></audio> 
+<audio id="noteD" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/d.wav?v=1693146041767"></audio> 
+<audio id="noteD#" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/d%23.wav?v=1693146056193"></audio> 
+<audio id="noteE" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/e.wav?v=1693146060804"></audio> 
+<audio id="noteF" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/f.wav?v=1693146073175"></audio> 
+<audio id="noteF#" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/f%23.wav?v=1693146076015"></audio> 
+<audio id="noteG" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/g.wav?v=1693146077353"></audio> 
+<audio id="noteG#" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/g%23.wav?v=1693146082631"></audio> 
+<audio id="noteA" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/a.wav?v=1693146085759"></audio> 
+<audio id="noteA#" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/a%23.wav?v=1693146088413"></audio> 
+<audio id="noteB" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/b.wav?v=1693146091179"></audio> 
+<audio id="noteC2" src="https://cdn.glitch.global/499564d0-1c45-43ff-b11c-a1b546d4d054/c2.wav?v=1693146094027"></audio> 
+
+<!-- Modify the popup below to display the 'password' for your next world -->
+<div class="popup-container" id="popupContainer">
+  <div class="popup-content">
+    <p>Secret unlocked! The haunted message is revealed...</p>
+    <p>Enter if you dare...</p>
+  </div>
+</div>
+
+<script>
+  const keys = document.querySelectorAll('.key');
+// This is where you would set and modify the 'password' sequence
+  const sequence = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B'];
+  let sequenceIndex = 0;
+
+  document.addEventListener('keydown', event => {
+  const key = event.key.toLowerCase();
+  switch (key) {
+    case 'a':
+      playNoteByKey('C');
+      break;
+    case 'w':
+      playNoteByKey('C#');
+      break;
+    case 's':
+      playNoteByKey('D');
+      break;
+    case 'e':
+      playNoteByKey('D#');
+      break;
+    case 'd':
+      playNoteByKey('E');
+      break;
+    case 'f':
+      playNoteByKey('F');
+      break;
+    case 't':
+      playNoteByKey('F#');
+      break;
+    case 'g':
+      playNoteByKey('G');
+      break;
+    case 'y':
+      playNoteByKey('G#');
+      break;
+    case 'h':
+      playNoteByKey('A');
+      break;
+    case 'u':
+      playNoteByKey('A#');
+      break;
+    case 'j':
+      playNoteByKey('B');
+      break;
+    case 'k':
+      playNoteByKey('C2');
+      break;
+    default:
+      break;
+  }
+});
+
+keys.forEach(key => {
+  key.addEventListener('mousedown', () => playKey(key));
+  key.addEventListener('mouseup', () => releaseKey(key));
+  key.addEventListener('mouseleave', () => releaseKey(key));
+});
+
+function playKey(key) {
+  key.classList.add('active');
+  const note = key.getAttribute('data-note');
+  playAudio(note);
+  checkSequence(note); // Call checkSequence whenever a key is played
+}
+
+function releaseKey(key) {
+  key.classList.remove('active');
+}
+
+function playNoteByKey(note) {
+  playAudio(note);
+  checkSequence(note); // Call checkSequence whenever a note is played
+}
+
+function playAudio(note) {
+  const audio = document.getElementById(`note${note}`);
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play();
+  }
+}
+
+function releaseKey(key) {
+  key.classList.remove('active');
+  
+  // Stop the audio if needed (e.g., add audio.pause(); here)
+}
+
+function checkSequence(note) {
+  if (note === sequence[sequenceIndex]) {
+    sequenceIndex++;
+    if (sequenceIndex === sequence.length) {
+      openPopup();
+      sequenceIndex = 0; // Reset the sequence index
+    }
+  } else {
+    sequenceIndex = 0; // Reset the sequence index if the note is incorrect
+  }
+}
+
+function openPopup() {
+  const popupContainer = document.getElementById('popupContainer');
+  popupContainer.style.display = 'flex';
+}
+
+function closePopup() {
+  const popupContainer = document.getElementById('popupContainer');
+  popupContainer.style.display = 'none';
+}
+
+document.addEventListener('keyup', event => {
+  const key = event.key.toLowerCase();
+  switch (key) {
+    // Your key bindings
+    default:
+      break;
+  }
+});
+</script>
+</body>
+</html>
