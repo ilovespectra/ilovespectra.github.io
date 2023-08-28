@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Subscriber Trends</title>
+    <title>Mapper Subscriber Trends</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-    <h1>Helium Mobile Subscriber Trend</h1>
+    <h1>Helium Mobile Mapper Subscriber Trend</h1>
     <div id="subscriberChartContainer">
         <canvas id="subscriberChart" width="800" height="400"></canvas>
     </div>
@@ -46,7 +46,7 @@
             "08-09", "08-10", "08-11", "08-12", "08-13",
             "08-14", "08-15", "08-16", "08-17", "08-18",
             "08-19", "08-20", "08-21", "08-22", "08-23",
-            "08-24", "08-25", "08-26"
+            "08-24", "08-25", "08-26", "08-27"
         ];
 
         const subscribers = [
@@ -55,7 +55,8 @@
             105, 55, 50, 199, 156,
             95, 125, 216, 121, 68,
             62, 107, 114, 89, 61, 46, 
-            41, 43, 54, 37, 46, 33, 9
+            41, 43, 54, 37, 46, 33, 
+            34, 22
         ];
 
         const totalSubscribers = subscribers.reduce((total, current) => total + current, 0);
