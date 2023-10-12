@@ -42,15 +42,18 @@
         const dates = [
             "july avg", "aug avg", "sept avg", "10-01", 
             "10-02", "10-03", "10-04", "10-05", "10-06",
+            "10-07", "10-08", "10-09", "10-10", "10-11", 
+            "10-12" 
         ];
 
         const subscribers = [
             64, 92, 19, 6, 12, 
-            12, 11, 9, 9, 
+            12, 11, 9, 16, 11,
+            10, 17, 75, 63, 8, 
         ];
 
         const totalSubscribers = subscribers.reduce((total, current) => total + current, 0);
-        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4370;
+        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4219;
         const trendData = subscribers.map((_, index) => subscribers.reduce((sum, val, i) => i <= index ? sum + val : sum, 0) / (index + 1));
 
         const ctx = document.getElementById('subscriberChart').getContext('2d');
