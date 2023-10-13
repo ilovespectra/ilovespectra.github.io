@@ -49,11 +49,11 @@
         const subscribers = [
             64, 92, 19, 6, 12, 
             12, 11, 9, 16, 11,
-            10, 17, 75, 63, 8, 
+            10, 17, 75, 63, 20, 
         ];
 
         const totalSubscribers = subscribers.reduce((total, current) => total + current, 0);
-        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4219;
+        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4207;
         const trendData = subscribers.map((_, index) => subscribers.reduce((sum, val, i) => i <= index ? sum + val : sum, 0) / (index + 1));
 
         const ctx = document.getElementById('subscriberChart').getContext('2d');
