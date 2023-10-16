@@ -35,7 +35,7 @@
         <canvas id="subscriberChart" width="800" height="400"></canvas>
     </div>
     <div id="totalSubscribers">
-        <h3>Total Subscribers: <span id="totalSubscribersValue">0</span></h3>
+<!--         <h3>Total Subscribers: <span id="totalSubscribersValue">0</span></h3> -->
     </div>
 
     <script>
@@ -43,18 +43,18 @@
             "july avg", "aug avg", "sept avg", "10-01", 
             "10-02", "10-03", "10-04", "10-05", "10-06",
             "10-07", "10-08", "10-09", "10-10", "10-11", 
-            "10-12", "10-13", "10-14" 
+            "10-12", "10-13", "10-14", "10-15", "10-16" 
         ];
 
         const subscribers = [
             64, 92, 19, 6, 12, 
             12, 11, 9, 16, 11,
             10, 17, 75, 63, 20, 
-            14
+            19, 18, 15, 12
         ];
 
         const totalSubscribers = subscribers.reduce((total, current) => total + current, 0);
-        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4193;
+        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4143;
         const trendData = subscribers.map((_, index) => subscribers.reduce((sum, val, i) => i <= index ? sum + val : sum, 0) / (index + 1));
 
         const ctx = document.getElementById('subscriberChart').getContext('2d');
