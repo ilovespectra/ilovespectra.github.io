@@ -35,7 +35,7 @@
         <canvas id="subscriberChart" width="800" height="400"></canvas>
     </div>
     <div id="totalSubscribers">
-<!--         <h3>Total Subscribers: <span id="totalSubscribersValue">0</span></h3> -->
+        <h3><span id="totalSubscribersValue"></span></h3>
     </div>
 
     <script>
@@ -56,7 +56,7 @@
         ];
 
         const totalSubscribers = subscribers.reduce((total, current) => total + current, 0);
-        document.getElementById("totalSubscribersValue").textContent = totalSubscribers + 4143;
+        const totalSubscribersValue = "";
         const trendData = subscribers.map((_, index) => subscribers.reduce((sum, val, i) => i <= index ? sum + val : sum, 0) / (index + 1));
 
         const ctx = document.getElementById('subscriberChart').getContext('2d');
