@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Birthday Countdown Clock</title>
+  <link href="https://fonts.cdnfonts.com/css/alarm-clock" rel="stylesheet">
+  <style>
+    /* Add some styling to the page */
+    body {
+      background-color: black;
+      color: white;
+      text-align: center;
+      font-family: 'courier new', sans-serif;
+      font-size: 40px;
+      background-image: url('');
+      background-size: 1000px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    /* Add some styling to the countdown numbers */
+    .time-number {
+      font-family: 'alarm clock', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h3>My birthday is in:</h3>
+  <div id="bday-countdown"></div>
+  <script>
+    // Set the date we're counting down to
+
+    var bdayCountdownDate = new Date("Jan 25, 2024 00:00:00").getTime();
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+      // Get today's date and time
+      var now = new Date().getTime();
+
+      // Find the distance between now and the countdown date
+      var bdayDistance = bdayCountdownDate - now;
+
+      // Time calculations for days, hours, minutes and seconds
+      var bdayDays = Math.floor(bdayDistance / (1000 * 60 * 60 * 24));
+      var bdayHours = Math.floor((bdayDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var bdayMinutes = Math.floor((bdayDistance % (1000 * 60 * 60)) / (1000 * 60));
+      var bdaySeconds = Math.floor((bdayDistance % (1000 * 60)) / 1000);
+
+      // Display the result in the element with id="bday-countdown"
+      document.getElementById("bday-countdown").innerHTML =
+        '<span class="time-number">' + bdayDays + '</span> days ' +
+        '<span class="time-number">' + bdayHours + '</span> hours ' +
+        '<span class="time-number">' + bdayMinutes + '</span> minutes ' +
+        '<span class="time-number">' + bdaySeconds + '</span> seconds ';
+
+      // If the count down is finished, write some text
+      if (bdayDistance < 0) {
+        clearInterval(x);
+        document.getElementById("bday-countdown").innerHTML = "Happy Birthday!";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
