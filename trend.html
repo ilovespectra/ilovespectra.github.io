@@ -58,12 +58,12 @@
             type: 'bar',
             data: {
                 labels: dates,
-                datasets: [
+               datasets: [
                     {
                         label: 'Subscribers',
                         data: subscribers,
-                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: dates.map((date, index) => index < 5 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(75, 192, 192, 0.5)'), 
+                        borderColor: 'blue',
                         borderWidth: 1,
                         barPercentage: 0.6,
                         categoryPercentage: 0.5
